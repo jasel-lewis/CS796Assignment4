@@ -8,12 +8,14 @@ package com.jasel.classes.cs796.assignment4;
  *
  */
 public class unoserver {
+	static final int PORTMIN = 1024;
+	static final int PORTMAX = 65535;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int port;
+		int port = 0;
 		
 		if (args.length == 1) {
 			try {
@@ -23,7 +25,10 @@ public class unoserver {
 			}
 		} else {
 			printUsage(1);
-			
+		}
+		
+		if ((port < PORTMIN) || (port > PORTMAX)) {
+			handlePortError();
 		}
 	}
 	
@@ -33,7 +38,7 @@ public class unoserver {
 		System.out.println("UNOserver - Urgent/Normal On-demand Server");
 		System.out.println("Usage: unoserver <port>");
 		System.out.println("   - <port> The port on which to run the server (in " +
-				"the range 1024-65535)");
+				"the range " + PORTMIN + "-" + PORTMAX + ")");
 		
 		System.exit(exitCode);
 	}
@@ -42,7 +47,7 @@ public class unoserver {
 	
 	private static void handlePortError() {
 		System.err.println("The sole argument <port> must be an integer in the " +
-				"range 1024 to 65535");
+				"range " + PORTMIN + "-" + PORTMAX + ")");
 		System.exit(1);
 	}
 }
