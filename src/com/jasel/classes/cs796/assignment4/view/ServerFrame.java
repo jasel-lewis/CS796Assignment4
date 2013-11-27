@@ -5,7 +5,6 @@
 package com.jasel.classes.cs796.assignment4.view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,11 +17,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import java.awt.Component;
 import javax.swing.Box;
-import javax.swing.SwingConstants;
 import javax.swing.KeyStroke;
 
 import com.jasel.classes.cs796.assignment4.controller.ServerController;
-import com.jasel.classes.cs796.assignment4.model.ConnectionListModel;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
@@ -37,17 +34,13 @@ import javax.swing.ListSelectionModel;
 public class ServerFrame extends JFrame {
 	private static final long serialVersionUID = -3579124248456596891L;
 	private JPanel contentPane;
-	private ConnectionListModel slModel;
 	private ServerController controller;
 	
 
 	/**
 	 * Create the frame.
 	 */
-	public ServerFrame(ConnectionListModel slModel, ServerController controller) {
-		this.slModel = slModel;
-		this.controller = controller;
-		
+	public ServerFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
@@ -128,7 +121,9 @@ public class ServerFrame extends JFrame {
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		contentPane.add(splitPane, BorderLayout.CENTER);
 		
-		JList list = new JList(slModel);
+		JList list = new JList(controller.getModel());
+		list.setEnabled(false);
+		list.setVisibleRowCount(-1);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		splitPane.setLeftComponent(list);
 		
@@ -136,5 +131,10 @@ public class ServerFrame extends JFrame {
 		textArea.setTabSize(4);
 		textArea.setEditable(false);
 		splitPane.setRightComponent(textArea);
+	}
+
+
+	public void setController(ServerController controller) {
+		this.controller = controller;
 	}
 }

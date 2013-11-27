@@ -11,6 +11,8 @@ import java.util.TreeSet;
 
 import javax.swing.AbstractListModel;
 
+import com.jasel.classes.cs796.assignment4.view.ServerFrame;
+
 /**
  * @author Jasel
  *
@@ -18,10 +20,17 @@ import javax.swing.AbstractListModel;
 public class ConnectionListModel extends AbstractListModel<Connection> {
 	private static final long serialVersionUID = 7709874064164170046L;
 	private SortedSet<Connection> set = null;
+	private ServerFrame view = null;
 	
 	
 	public ConnectionListModel() {
 		set = new TreeSet<Connection>();
+	}
+	
+	
+	
+	public void setView(ServerFrame view) {
+		this.view = view;
 	}
 	
 	

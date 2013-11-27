@@ -26,9 +26,11 @@ public class unoserver {
 			public void run() {
 				try {
 					ConnectionListModel clm = new ConnectionListModel();
-					ServerController controller = new ServerController();
-					ServerFrame frame = new ServerFrame(clm, controller);
-					frame.setVisible(true);
+					ServerFrame view = new ServerFrame();
+					ServerController controller = new ServerController(clm, view);
+					
+					view.setController(controller);
+					view.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
