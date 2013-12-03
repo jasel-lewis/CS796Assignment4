@@ -1,19 +1,17 @@
 /**
- * 
+ * @author Jasel
  */
 package com.jasel.classes.cs796.assignment4;
 
 import java.awt.EventQueue;
 
 import com.jasel.classes.cs796.assignment4.controller.ServerController;
-import com.jasel.classes.cs796.assignment4.model.ConnectionListModel;
-import com.jasel.classes.cs796.assignment4.view.ServerFrame;
+import com.jasel.classes.cs796.assignment4.view.CloseListener;
+import com.jasel.classes.cs796.assignment4.view.ServerView;
 
-/**
- * @author Jasel
- *
- */
 public class unoserver {
+	protected static final int DEFAULTPORT = 8008;
+
 	/**
 	 * @param args
 	 */
@@ -25,11 +23,13 @@ public class unoserver {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ConnectionListModel clm = new ConnectionListModel();
-					ServerFrame view = new ServerFrame();
-					ServerController controller = new ServerController(clm, view);
+					ServerView view = new ServerView(DEFAULTPORT);
+					ServerController controller = new ServerController(view.getTableModel().getConnections(), view);
 					
 					view.setController(controller);
+					view.addWindowListener(new CloseListener("Exit UNOServer", "Are you sure you wish to exit UNOServer?"));
+					//view.pack();
+					view.setViewportHeight();
 					view.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -1,7 +1,0 @@
-http://www.youtube.com/watch?v=jba-TQe4h-0
-
-https://www.google.com/search?q=what+is+windowbuilder+pro&oq=what+is+windowbuilder+pro&aqs=chrome..69i57.3924j0j7&sourceid=chrome&espv=210&es_sm=93&ie=UTF-8
-
-http://stackoverflow.com/questions/13391544/is-windowbuilder-pro-already-installed-in-eclipse
-
-http://www.eclipse.org/windowbuilder/download.php
