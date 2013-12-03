@@ -106,6 +106,7 @@ public class CloseListener extends WindowAdapter {
 		//  Set the close option. Setting it here allows the close action to
 		//  prevent the window from closing by resetting the close option to
 		//  DO_NOTHING_ON_CLOSE.
+//TODO: destroy all sockets nicely
 		if (disposeOnClose) {
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		} else {

@@ -20,7 +20,7 @@ public class ServerSocketManager implements Runnable {
 	private ServerController controller = null;
 	private ConnectionTableModel model = null;
 	private List<Thread> threadList = new ArrayList<Thread>();
-	private List<ClientSocketManager> clientSocketManagerList = new ArrayList<ClientSocketManager>();
+	private List<ConnectionManager> clientSocketManagerList = new ArrayList<ConnectionManager>();
 	private volatile boolean running = false;
 	
 	public ServerSocketManager(ServerController controller, ConnectionTableModel model, int port) {
@@ -39,18 +39,19 @@ public class ServerSocketManager implements Runnable {
 	
 	@Override
 	public void run() {
+		Connection connection = null;
+		ConnectionManager clientSocketManager = null;
+		Thread thread = null;
+		
 		running = true;
 		
+		controller.writeToLog("Server socket listening");
+		
 		while(running) {
-			Connection connection = null;
-			ClientSocketManager clientSocketManager = null;
-			Thread thread = null;
-			
 			try {
-				controller.writeToLog("Server socket listening");
-				connection = (Connection)serverSocket.accept();
-				connection.setType("unspecified");
-				clientSocketManager = new ClientSocketManager(controller, model, connection);
+				connection = new Connection(serverSocket.accept());
+
+				clientSocketManager = new ConnectionManager(controller, model, connection);
 				clientSocketManagerList.add(clientSocketManager);
 				
 				thread = new Thread(clientSocketManager);
@@ -58,6 +59,7 @@ public class ServerSocketManager implements Runnable {
 				threadList.add(thread);
 			} catch (IOException ioe) {
 				System.err.println("Could not accept() a new client connection");
+				ioe.printStackTrace();
 			}
 		}
 	}
@@ -90,9 +92,7 @@ public class ServerSocketManager implements Runnable {
 				System.err.println("Could not close ServerSocket");
 			}
 			
-			System.err.println("before server socket closed");
 			controller.writeToLog("Server socket closed");
-			System.err.println("after server socket closed");
 		}
 	}
 }
