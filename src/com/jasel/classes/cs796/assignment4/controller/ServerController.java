@@ -65,13 +65,4 @@ public class ServerController {
 	public void handleClearLogButtonClick() {
 		view.clearLog();
 	}
-	
-	
-	
-	//TODO: Remove this
-	public void testAddConnectionsToView() {
-		//connections.add(new Connection());
-		//view.getTableModel().fireTableChanged(new TableModelEvent(view.getTableModel()));
-		model.addConnection(new Connection());
-	}
 }

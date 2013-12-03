@@ -13,21 +13,13 @@ public class Connection extends Socket {
 	private String type = "NoTypeSpecified";
 	
 	public String getIPv4() {
-		//return getInetAddress().toString();
-		return new String("test");
+		return getInetAddress().toString();
 	}
 	
 	
 	
 	public String getType() {
 		return type;
-	}
-	
-	
-	
-	//TODO: get rid of this - testing
-	public int getPort() {
-		return 0;
 	}
 
 

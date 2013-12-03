@@ -207,7 +207,6 @@ System.err.println(size);
 	private class ListenViewItemClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-/*
 			int port = defaultPort;
 			
 			try {
@@ -223,8 +222,6 @@ System.err.println(size);
 			}
 			
 			getController().handleListenViewItemClick(port);
-*/
-	getController().testAddConnectionsToView();
 		}
 	}
 	
