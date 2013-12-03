@@ -180,12 +180,8 @@ public class ServerView extends JFrame implements TableModelListener {
 		int headerHeight = table.getTableHeader().getHeight();
 		int rowHeight = table.getRowHeight();
 		Dimension size = new Dimension();
-		
-System.err.println("width: " + width + "; headerHeight: " + headerHeight + "; rowHeight: " + rowHeight);
 
 		size.setSize(width, ((VIEWABLEROWS * rowHeight) + headerHeight));
-		
-System.err.println(size);
 		
 		table.setPreferredScrollableViewportSize(size);
 	}
