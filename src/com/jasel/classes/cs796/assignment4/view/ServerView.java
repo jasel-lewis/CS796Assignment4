@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 
 import javax.swing.Box;
@@ -47,7 +49,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	private JSpinner portSpinner;
 	private JTextArea log;
 	private ServerController controller;
-	private int defaultPort;
+	private int defaultPort = 0;
 	private ConnectionTableModel tableModel;
 	private JTable table;
 	private JMenuItem menuItemClearLog;
@@ -222,7 +224,7 @@ System.err.println(size);
 			
 			getController().handleListenViewItemClick(port);
 */
-getController().testAddConnectionsToView();
+	getController().testAddConnectionsToView();
 		}
 	}
 	

@@ -3,21 +3,22 @@
  */
 package com.jasel.classes.cs796.assignment4.controller;
 
-import java.util.Vector;
-
 import com.jasel.classes.cs796.assignment4.model.Connection;
+import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 import com.jasel.classes.cs796.assignment4.view.ServerView;
 
 
 public class ServerController {
-	private Vector<Connection> connections = null;
+	private ConnectionTableModel model = null;
 	private ServerView view = null;
 	private Thread thread = null;
 	private ServerSocketManager serverSocketManager = null;
 	boolean isListening = false;
+	int testPort = 4587;  //TODO: remove this - test purposes
 
-	public ServerController(Vector<Connection> connections, ServerView view) {
-		this.connections = connections;
+	public ServerController(ConnectionTableModel model, ServerView view) {
+		//this.connections = connections;
+		this.model = model;
 		this.view = view;
 	}
 
@@ -51,7 +52,7 @@ public class ServerController {
 	
 	
 	private void startListening(int port) {
-		serverSocketManager = new ServerSocketManager(connections, port);
+		serverSocketManager = new ServerSocketManager(model, port);
 		thread = new Thread(serverSocketManager);
 		thread.start();
 		
@@ -69,7 +70,8 @@ public class ServerController {
 	
 	//TODO: Remove this
 	public void testAddConnectionsToView() {
-		//TODO: Was working here when left off.  Generate fake Connections, add them to the
-		//model and see if the JTable remains in synch
+		//connections.add(new Connection());
+		//view.getTableModel().fireTableChanged(new TableModelEvent(view.getTableModel()));
+		model.addConnection(new Connection());
 	}
 }

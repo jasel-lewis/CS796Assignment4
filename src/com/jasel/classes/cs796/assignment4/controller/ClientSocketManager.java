@@ -11,21 +11,23 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Vector;
 
 import com.jasel.classes.cs796.assignment4.model.Connection;
+import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 
 /**
  * @author Jasel
  *
  */
 public class ClientSocketManager implements Runnable {
+	private ConnectionTableModel model = null;
 	private Connection connection = null;
 	private volatile boolean running = false;
 	
-	public ClientSocketManager(Vector<Connection> connections, Connection connection) {
+	public ClientSocketManager(ConnectionTableModel model, Connection connection) {
 		this.connection = connection;
-		connections.add(connection);
+		this.model = model;
+		model.addConnection(connection);
 	}
 	
 	
@@ -117,6 +119,7 @@ public class ClientSocketManager implements Runnable {
 			writeToConnection("Server has terminated the connection.  Goodbye...", true);
 			try {
 				connection.close();
+				model.removeConnection(connection);
 			} catch (IOException e) {
 				System.err.println("Could not close the socket.  Runaway socket.");
 				e.printStackTrace();

@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import com.jasel.classes.cs796.assignment4.model.Connection;
+import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 
 /**
  * @author Jasel
@@ -17,14 +17,14 @@ import com.jasel.classes.cs796.assignment4.model.Connection;
  */
 public class ServerSocketManager implements Runnable {
 	private ServerSocket serverSocket = null;
-	private Vector<Connection> connections = null;
+	private ConnectionTableModel model = null;
 	private List<Thread> threadList = new ArrayList<Thread>();
 	private List<ClientSocketManager> clientSocketManagerList = new ArrayList<ClientSocketManager>();
 	private volatile boolean running = false;
 	
-	public ServerSocketManager(Vector<Connection> connections, int port) {
+	public ServerSocketManager(ConnectionTableModel model, int port) {
 		try {
-			this.connections = connections;
+			this.model = model;
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
 			System.err.println("Cannot create ServerSocket on port " + port);
@@ -46,7 +46,7 @@ public class ServerSocketManager implements Runnable {
 			try {
 				connection = (Connection)serverSocket.accept();
 				connection.setType("unspecified");
-				clientSocketManager = new ClientSocketManager(connections, connection);
+				clientSocketManager = new ClientSocketManager(model, connection);
 				clientSocketManagerList.add(clientSocketManager);
 				
 				thread = new Thread(clientSocketManager);

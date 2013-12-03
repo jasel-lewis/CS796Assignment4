@@ -24,7 +24,7 @@ public class unoserver {
 			public void run() {
 				try {
 					ServerView view = new ServerView(DEFAULTPORT);
-					ServerController controller = new ServerController(view.getTableModel().getConnections(), view);
+					ServerController controller = new ServerController(view.getTableModel(), view);
 					
 					view.setController(controller);
 					view.addWindowListener(new CloseListener("Exit UNOServer", "Are you sure you wish to exit UNOServer?"));
