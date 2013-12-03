@@ -50,6 +50,7 @@ public class ConnectionManager implements Runnable {
 	 * Prevent future echo-back with the socket, indicate that the server has
 	 * chosen to terminate the connection, and close the socket
 	 */
+	//TODO: Need to test this
 	public void terminate() {
 		running = false;
 		

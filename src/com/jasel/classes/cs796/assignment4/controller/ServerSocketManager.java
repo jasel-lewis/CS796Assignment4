@@ -19,8 +19,8 @@ public class ServerSocketManager implements Runnable {
 	private ServerSocket serverSocket = null;
 	private ServerController controller = null;
 	private ConnectionTableModel model = null;
-	private List<Thread> threadList = new ArrayList<Thread>();
-	private List<ConnectionManager> clientSocketManagerList = new ArrayList<ConnectionManager>();
+	private List<Thread> threads = new ArrayList<Thread>();
+	private List<ConnectionManager> connectionManagers = new ArrayList<ConnectionManager>();
 	private volatile boolean running = false;
 	
 	public ServerSocketManager(ServerController controller, ConnectionTableModel model, int port) {
@@ -52,11 +52,11 @@ public class ServerSocketManager implements Runnable {
 				connection = new Connection(serverSocket.accept());
 
 				clientSocketManager = new ConnectionManager(controller, model, connection);
-				clientSocketManagerList.add(clientSocketManager);
+				connectionManagers.add(clientSocketManager);
 				
 				thread = new Thread(clientSocketManager);
 				thread.start();
-				threadList.add(thread);
+				threads.add(thread);
 			} catch (IOException ioe) {
 				System.err.println("Could not accept() a new client connection");
 				ioe.printStackTrace();
@@ -67,8 +67,8 @@ public class ServerSocketManager implements Runnable {
 	
 	
 	public void terminate() {
-		int csmlSize = clientSocketManagerList.size();
-		int tlSize = threadList.size();
+		int csmlSize = connectionManagers.size();
+		int tlSize = threads.size();
 		
 		running = false;
 		
@@ -77,12 +77,12 @@ public class ServerSocketManager implements Runnable {
 			System.exit(2);
 		} else {
 			for (int i = 0; i < csmlSize; i++) {
-				clientSocketManagerList.get(i).terminate();
+				connectionManagers.get(i).terminate();
 				
 				try {
-					threadList.get(i).join(2000);
+					threads.get(i).join(2000);
 				} catch (InterruptedException ie) {
-					;  // Do nothing - normal Exception if interrupted
+					;  //TODO: Do nothing - normal Exception if interrupted (maybe? - could something better be done?)
 				}
 			}
 			
