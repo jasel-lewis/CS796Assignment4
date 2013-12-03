@@ -17,15 +17,18 @@ import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
  */
 public class ServerSocketManager implements Runnable {
 	private ServerSocket serverSocket = null;
+	private ServerController controller = null;
 	private ConnectionTableModel model = null;
 	private List<Thread> threadList = new ArrayList<Thread>();
 	private List<ClientSocketManager> clientSocketManagerList = new ArrayList<ClientSocketManager>();
 	private volatile boolean running = false;
 	
-	public ServerSocketManager(ConnectionTableModel model, int port) {
+	public ServerSocketManager(ServerController controller, ConnectionTableModel model, int port) {
 		try {
+			this.controller = controller;
 			this.model = model;
 			serverSocket = new ServerSocket(port);
+			controller.writeToLog("Created server socket: " + serverSocket);
 		} catch (IOException e) {
 			System.err.println("Cannot create ServerSocket on port " + port);
 			e.printStackTrace();
@@ -44,9 +47,10 @@ public class ServerSocketManager implements Runnable {
 			Thread thread = null;
 			
 			try {
+				controller.writeToLog("Server socket listening");
 				connection = (Connection)serverSocket.accept();
 				connection.setType("unspecified");
-				clientSocketManager = new ClientSocketManager(model, connection);
+				clientSocketManager = new ClientSocketManager(controller, model, connection);
 				clientSocketManagerList.add(clientSocketManager);
 				
 				thread = new Thread(clientSocketManager);
@@ -79,6 +83,16 @@ public class ServerSocketManager implements Runnable {
 					;  // Do nothing - normal Exception if interrupted
 				}
 			}
+			
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+				System.err.println("Could not close ServerSocket");
+			}
+			
+			System.err.println("before server socket closed");
+			controller.writeToLog("Server socket closed");
+			System.err.println("after server socket closed");
 		}
 	}
 }

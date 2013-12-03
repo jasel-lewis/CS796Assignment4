@@ -152,13 +152,17 @@ public class ServerView extends JFrame implements TableModelListener {
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		contentPane.add(splitPane, BorderLayout.CENTER);
 		
+		JScrollPane tableScrollPane = new JScrollPane();
+		splitPane.setLeftComponent(tableScrollPane);
+		
+		JScrollPane logScrollPane = new JScrollPane();
+		splitPane.setRightComponent(logScrollPane);
+		
 		log = new JTextArea();
 		log.setTabSize(4);
 		log.setEditable(false);
-		splitPane.setRightComponent(log);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		splitPane.setLeftComponent(scrollPane);
+		logScrollPane.setViewportView(log);
 		
 		tableModel = new ConnectionTableModel();
 		table = new JTable(tableModel);
@@ -170,7 +174,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setEnabled(false);
 		
-		scrollPane.setViewportView(table);
+		tableScrollPane.setViewportView(table);
 	}
 	
 	

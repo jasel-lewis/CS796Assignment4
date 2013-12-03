@@ -15,7 +15,6 @@ public class ServerController {
 	boolean isListening = false;
 
 	public ServerController(ConnectionTableModel model, ServerView view) {
-		//this.connections = connections;
 		this.model = model;
 		this.view = view;
 	}
@@ -50,12 +49,18 @@ public class ServerController {
 	
 	
 	private void startListening(int port) {
-		serverSocketManager = new ServerSocketManager(model, port);
+		serverSocketManager = new ServerSocketManager(this, model, port);
 		thread = new Thread(serverSocketManager);
 		thread.start();
 		
 		view.configureForListeningState(true);
 		isListening = true;
+	}
+	
+	
+	
+	public synchronized void writeToLog(String text) {
+		view.appendToLog(text + "\n");
 	}
 
 
