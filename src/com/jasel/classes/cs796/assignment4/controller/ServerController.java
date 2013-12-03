@@ -3,7 +3,6 @@
  */
 package com.jasel.classes.cs796.assignment4.controller;
 
-import com.jasel.classes.cs796.assignment4.model.Connection;
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 import com.jasel.classes.cs796.assignment4.view.ServerView;
 
@@ -14,7 +13,6 @@ public class ServerController {
 	private Thread thread = null;
 	private ServerSocketManager serverSocketManager = null;
 	boolean isListening = false;
-	int testPort = 4587;  //TODO: remove this - test purposes
 
 	public ServerController(ConnectionTableModel model, ServerView view) {
 		//this.connections = connections;
