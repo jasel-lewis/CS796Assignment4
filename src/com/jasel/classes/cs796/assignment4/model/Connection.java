@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,8 +19,11 @@ import java.util.Date;
  *
  */
 public class Connection {
+	public static final String URGENT = "Urgent";
+	public static final String NORMAL = "Normal";
+	
 	private Socket socket = null;
-	private String type = "NoTypeSpecified";
+	private String type = Connection.URGENT;
 	
 	public Connection(Socket socket) {
 		this.socket = socket;
@@ -27,14 +31,26 @@ public class Connection {
 	
 	
 	
+	public Connection(InetAddress inetAddress, int port) throws IOException {
+		this.socket = new Socket(inetAddress, port);
+	}
+	
+	
+	
 	public String getIPv4() {
-		return socket.getInetAddress().toString();
+		return getInetAddress().toString();
+	}
+	
+	
+	
+	public InetAddress getInetAddress() {
+		return socket.getInetAddress();
 	}
 	
 	
 	
 	public int getPort() {
-		return (socket.getPort());
+		return socket.getPort();
 	}
 	
 	
@@ -119,5 +135,17 @@ public class Connection {
 
 	public void close() throws IOException {
 		socket.close();
+	}
+	
+	
+	
+	public boolean hasConnection() {
+		return (socket.isConnected() && !socket.isClosed());
+	}
+	
+	
+	
+	public String toString() {
+		return (getType() + " client" + (hasConnection() ? "" : " not") + " connected on " + socket);
 	}
 }
