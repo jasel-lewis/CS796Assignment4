@@ -1,5 +1,5 @@
 /**
- * @author Jasel
+ * 
  */
 package com.jasel.classes.cs796.assignment4.controller;
 
@@ -7,6 +7,9 @@ import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 import com.jasel.classes.cs796.assignment4.view.ServerView;
 
 
+/**
+ * @author Jasel
+ */
 public class ServerController {
 	private ConnectionTableModel model = null;
 	private ServerView view = null;

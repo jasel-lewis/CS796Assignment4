@@ -1,8 +1,6 @@
 package com.jasel.classes.cs796.assignment4.view;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,14 +8,10 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import java.awt.Component;
-import javax.swing.Box;
-import java.awt.FlowLayout;
-import javax.swing.SwingConstants;
 import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.text.ParseException;
 
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -28,7 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.DefaultComboBoxModel;
 
-import com.jasel.classes.cs796.assignment4.controller.ServerController;
+import com.jasel.classes.cs796.assignment4.controller.ClientController;
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 
 import javax.swing.SpinnerNumberModel;
@@ -38,14 +32,15 @@ public class ClientView extends JFrame {
 	
 	private int defaultPort = 0;
 	private boolean clearLogEnabled = false;
-	private ClientController clientController = null;
+	private ClientController controller = null;
 	
-	private JPanel contentPane;
-	private JTextField messageField;
 	private JTextField ipAddressTextField;
-	private JTextArea log;
+	private JSpinner portSpinner;
+	private JComboBox<ClientType> clientTypeCombo;
 	private JButton connectButton;
+	private JTextArea log;
 	private JButton clearLogButton;
+	private JTextField messageField;
 	private JButton sendButton;
 
 
@@ -57,7 +52,7 @@ public class ClientView extends JFrame {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
@@ -90,7 +85,7 @@ public class ClientView extends JFrame {
 		JLabel clientTypeLabel = new JLabel("Client Type:");
 		connectControlPanel.add(clientTypeLabel, "6, 1, right, default");
 		
-		JComboBox<ClientType> clientTypeCombo = new JComboBox<ClientType>();
+		clientTypeCombo = new JComboBox<ClientType>();
 		clientTypeCombo.setModel(new DefaultComboBoxModel<ClientType>(ClientType.values()));
 		clientTypeCombo.setSelectedIndex(0);
 		clientTypeCombo.setMaximumRowCount(2);
@@ -99,7 +94,7 @@ public class ClientView extends JFrame {
 		JLabel portLabel = new JLabel("Port:");
 		connectControlPanel.add(portLabel, "2, 3, right, default");
 		
-		JSpinner portSpinner = new JSpinner();
+		portSpinner = new JSpinner();
 		portSpinner.setModel(new SpinnerNumberModel(defaultPort, 1024, 65535, 1));
 		portSpinner.setToolTipText("Port range is from 1024 to 65535, inclusive");
 		portSpinner.setEditor(new JSpinner.NumberEditor(portSpinner, "#"));
@@ -163,7 +158,21 @@ public class ClientView extends JFrame {
 	private class ConnectClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			getController().handleConnectClick();
+			int port = defaultPort;
+			
+			try {
+				portSpinner.commitEdit();
+			} catch (ParseException pe) {
+				;  // Do nothing, portSpinner will revert to previous, valid, value
+			}
+			
+			try {
+				port = Integer.parseInt(portSpinner.getValue().toString());
+			} catch (NumberFormatException nfe) {
+				portSpinner.setValue(port);
+			}
+			
+			getController().handleConnectClick(port);
 		}
 	}
 	
@@ -172,7 +181,7 @@ public class ClientView extends JFrame {
 	private class SendClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			getController().handleConnectClick();
+			getController().handleSendClick(messageField.getText());
 		}
 	}
 	
@@ -191,6 +200,30 @@ public class ClientView extends JFrame {
 		
 		if (!clearLogEnabled) {
 			clearLogButton.setEnabled(true);
+		}
+	}
+	
+	
+	
+	public void configureForConnectState(boolean connected) {
+		if (connected) {
+			connectButton.setText("Disconnect");
+
+			messageField.setEnabled(true);
+			sendButton.setEnabled(true);
+			
+			ipAddressTextField.setEnabled(false);
+			portSpinner.setEnabled(false);
+			clientTypeCombo.setEnabled(false);
+		} else {
+			connectButton.setText("Connect");
+			
+			messageField.setEnabled(false);
+			sendButton.setEnabled(false);
+			
+			ipAddressTextField.setEnabled(true);
+			portSpinner.setEnabled(true);
+			clientTypeCombo.setEnabled(true);
 		}
 	}
 }
