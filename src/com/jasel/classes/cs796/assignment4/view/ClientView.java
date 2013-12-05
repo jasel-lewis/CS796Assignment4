@@ -60,20 +60,26 @@ public class ClientView extends JFrame {
 		JPanel connectControlPanel = new JPanel();
 		connectControlPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.add(connectControlPanel, BorderLayout.NORTH);
-		connectControlPanel.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("right:default"),
-				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				FormFactory.GLUE_COLSPEC,
-				ColumnSpec.decode("15dlu"),
-				ColumnSpec.decode("right:default"),
-				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("left:max(50dlu;pref)"),
-				FormFactory.RELATED_GAP_COLSPEC,},
-			new RowSpec[] {
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.NARROW_LINE_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
+		connectControlPanel.setLayout(
+			new FormLayout(
+				new ColumnSpec[] {
+					FormFactory.RELATED_GAP_COLSPEC,
+					ColumnSpec.decode("right:default"),
+					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormFactory.GLUE_COLSPEC,
+					ColumnSpec.decode("15dlu"),
+					ColumnSpec.decode("right:default"),
+					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					ColumnSpec.decode("left:max(50dlu;pref)"),
+					FormFactory.RELATED_GAP_COLSPEC
+				},
+				new RowSpec[] {
+					FormFactory.DEFAULT_ROWSPEC,
+					FormFactory.NARROW_LINE_GAP_ROWSPEC,
+					FormFactory.DEFAULT_ROWSPEC
+				}
+			)
+		);
 		
 		JLabel ipAddressLabel = new JLabel("IP Address:");
 		connectControlPanel.add(ipAddressLabel, "2, 1, right, default");
@@ -120,9 +126,10 @@ public class ClientView extends JFrame {
 		messageField.setColumns(10);
 		
 		sendButton = new JButton("Send");
-		inputControlPanel.add(sendButton, BorderLayout.EAST);
 		sendButton.addActionListener(new SendClick());
 		sendButton.setEnabled(false);
+		inputControlPanel.add(sendButton, BorderLayout.EAST);
+		
 		
 		JPanel logControlPanel = new JPanel();
 		logControlPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -130,6 +137,7 @@ public class ClientView extends JFrame {
 		logControlPanel.setLayout(new BorderLayout(0, 0));
 		
 		clearLogButton = new JButton("Clear Log");
+		clearLogButton.addActionListener(new ClearLogClick());
 		clearLogButton.setEnabled(false);
 		logControlPanel.add(clearLogButton, BorderLayout.WEST);
 		
@@ -172,7 +180,20 @@ public class ClientView extends JFrame {
 				portSpinner.setValue(port);
 			}
 			
-			getController().handleConnectClick(port);
+			getController().handleConnectClick(
+					ipAddressTextField.getText(),
+					port,
+					(ClientType)clientTypeCombo.getSelectedItem()
+			);
+		}
+	}
+	
+	
+	
+	private class ClearLogClick implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			getController().handleClearLogClick();
 		}
 	}
 	
@@ -181,7 +202,12 @@ public class ClientView extends JFrame {
 	private class SendClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			getController().handleSendClick(messageField.getText());
+			String message = messageField.getText();
+			
+			if (!message.equals("")) {
+				getController().handleSendClick(messageField.getText());
+				messageField.setText("");
+			}
 		}
 	}
 	
