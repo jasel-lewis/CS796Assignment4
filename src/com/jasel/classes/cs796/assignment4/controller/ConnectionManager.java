@@ -108,6 +108,7 @@ public class ConnectionManager implements Runnable {
 			connection.close();
 			model.removeConnection(connection);
 		} catch (IOException e) {
+			// TODO: this exception might actually be normal because we're closing the socket when readLine() is blocking
 			System.err.println("Could not close the socket.  Runaway socket.");
 			e.printStackTrace();
 		}

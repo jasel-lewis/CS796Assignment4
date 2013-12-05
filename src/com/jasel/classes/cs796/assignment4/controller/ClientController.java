@@ -3,9 +3,7 @@
  */
 package com.jasel.classes.cs796.assignment4.controller;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
@@ -13,17 +11,15 @@ import javax.swing.JOptionPane;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 import com.jasel.classes.cs796.assignment4.model.ClientType;
-import com.jasel.classes.cs796.assignment4.model.Connection;
 import com.jasel.classes.cs796.assignment4.view.ClientView;
 
 /**
  * @author Jasel
  */
 public class ClientController {
-	private boolean isConnected = false;
-	
 	private ClientView view = null;
-	private Connection connection = null;
+	private ClientSocketManager clientSocketManager = null;
+	private Thread thread = null;
 
 	
 	public ClientController(ClientView view) {
@@ -33,7 +29,7 @@ public class ClientController {
 	
 	
 	public void handleConnectClick(String unverifiedIPAddress, int port, ClientType clientType) {
-		if (isConnected) {
+		if (clientSocketManager != null) {
 			disconnect();
 		} else {
 			// Validate the user-provided IPv4 address
@@ -57,27 +53,32 @@ public class ClientController {
 	public void handleSendClick(String message) {
 		if (!message.equals("")) {
 			view.clearMessage();
-			connection.write(message);
-		}
-	}
-	
-	
-	
-	private void disconnect() {
-		try {
-			connection.close();
-			view.configureForConnectedState(false);
-			isConnected = false;
-		} catch (IOException ioe) {
-			errorHelper(ioe, "Could not close the connection");
-			ioe.printStackTrace();
+			clientSocketManager.writeToConnection(message);
 		}
 	}
 	
 	
 	
 	private void connect(InetAddress inetAddress, int port, ClientType clientType) {
-		// THREAD???
+		clientSocketManager = new ClientSocketManager(this, inetAddress, port, clientType);
+		thread = new Thread(clientSocketManager);
+		thread.start();
+	}
+	
+	
+	
+	private void disconnect() {
+		if ((thread != null) && (clientSocketManager != null)) {
+			clientSocketManager.terminate();
+			
+			try {
+				thread.join(1000);
+			} catch (InterruptedException ie) {
+				;  // Do nothing - normal Exception if interrupted
+			}
+			
+			clientSocketManager = null;
+		}
 	}
 	
 	

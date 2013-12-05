@@ -34,6 +34,17 @@ public class ServerController {
 	
 	
 	
+	private void startListening(int port) {
+		serverSocketManager = new ServerSocketManager(this, model, port);
+		thread = new Thread(serverSocketManager);
+		thread.start();
+		
+		view.configureForListeningState(true);
+		isListening = true;
+	}
+	
+	
+	
 	private void stopListening() {
 		if (thread != null) {
 			serverSocketManager.terminate();
@@ -47,17 +58,6 @@ public class ServerController {
 		
 		view.configureForListeningState(false);
 		isListening = false;
-	}
-	
-	
-	
-	private void startListening(int port) {
-		serverSocketManager = new ServerSocketManager(this, model, port);
-		thread = new Thread(serverSocketManager);
-		thread.start();
-		
-		view.configureForListeningState(true);
-		isListening = true;
 	}
 	
 	

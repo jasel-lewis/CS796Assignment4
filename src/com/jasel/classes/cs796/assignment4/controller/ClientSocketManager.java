@@ -20,6 +20,7 @@ public class ClientSocketManager implements Runnable {
 	private ClientType clientType = null;
 	private int serverPort;
 	private boolean isConnected = false;
+	private boolean running = false;
 	
 	
 	public ClientSocketManager(
@@ -37,7 +38,7 @@ public class ClientSocketManager implements Runnable {
 	
 	@Override
 	public void run() {
-		boolean hasErrored = false;
+		running = true;
 
 		try {
 			connection = new Connection(serverInetAddress, serverPort);
@@ -46,10 +47,9 @@ public class ClientSocketManager implements Runnable {
 			controller.writeToLog("Established connection with UNOServer as a " + clientType + " client");
 		} catch (IOException ioe) {
 			controller.writeToLog("Unable to connect to UNOServer: connection refused");
-			hasErrored = true;
 		}
 		
-		if (!hasErrored && clientType.equals(ClientType.NORMAL)) {
+		if (isConnected && clientType.equals(ClientType.NORMAL)) {
 			// Normal client, so close the connection we just made - this indicates to
 			// UNOServer that we are a Normal client and it needs to call us back
 			try {
@@ -59,36 +59,62 @@ public class ClientSocketManager implements Runnable {
 				controller.writeToLog("Closed connection to let it know this is a " + clientType + " client");
 			} catch (IOException ioe) {
 				controller.errorHelper(ioe, "Could not close the connection");
-				hasErrored = true;
 			}
 			
 			// Create a Socket on the same local port that we just called out from.  This
 			// is the Socket which the UNOServer will call back on.
-			if (!hasErrored) {
+			if (!isConnected) {
 				try {
 					connection = new Connection((new ServerSocket(connection.getLocalPort())).accept());
 					controller.configureViewForConnectedState(true);
 					isConnected = true;
 				} catch (IOException ioe) {
 					controller.errorHelper(ioe, "Could not create a Socket for the UNOServer to call back to");
-					hasErrored = true;
 				}
 			}
 		}
 		
-		if (!hasErrored) {
+		if (isConnected) {
 			String input = connection.readLine();
 			
-			if (input.equals("")) {
-				// Connection is dead
-				try {
-					connection.close();
-				} catch (IOException e) {
-					;  // Do nothing...
+			while (running) {
+				if (input.equals("")) {
+					// Connection is dead
+					terminate();
+				} else {
+					controller.writeToLog(input);
 				}
-			} else {
 				
+				input = connection.readLine();
 			}
+		}
+	}
+	
+	
+	
+	public void writeToConnection(String message) {
+		if (isConnected) {
+			connection.write(message);
+		}
+	}
+	
+	
+	
+	/**
+	 * Prevent future echo-back with the socket, indicate that the server has
+	 * chosen to terminate the connection, and close the socket
+	 */
+	//TODO: Need to test this
+	public void terminate() {
+		running = false;
+		
+		try {
+			connection.close();
+			isConnected = false;
+			controller.configureViewForConnectedState(false);
+		} catch (IOException ioe) {
+			//TODO: this exception might actually be normal because we're closing the socket when readLine() is blocking
+			controller.errorHelper(ioe, "Could not close the socket");
 		}
 	}
 }
