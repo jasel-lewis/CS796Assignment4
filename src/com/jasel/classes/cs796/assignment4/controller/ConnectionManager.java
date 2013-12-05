@@ -15,7 +15,7 @@ import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
  * @author Jasel
  */
 public class ConnectionManager implements Runnable {
-	private ServerController controller = null;  //TODO: this is solely to write to the log - make a static Log object that fires update listeners to the view's log
+	private ServerController controller = null;  //TODO: this is being passed all the way down to this class solely to write to the log - make a static Log object that fires update listeners to the view's log
 	private ConnectionTableModel model = null;
 	private Connection connection = null;
 	private volatile boolean running = false;
@@ -46,7 +46,7 @@ public class ConnectionManager implements Runnable {
 		
 		input = connection.readLine();
 		
-		if (input == null) {
+		if (input == null) {  // TODO: better here is input.equals("") (or a negation thereof)
 			// Client has closed the Connection.  This means either it is a NORMAL client which
 			// is now waiting to be called back or the Connection was aborted.
 			try {
@@ -70,7 +70,7 @@ public class ConnectionManager implements Runnable {
 		}
 
 		while(running) {
-			if (input != null) {
+			if (input != null) {  // TODO: better here is input.equals("") (or a negation thereof)
 				// Echo back the string
 				connection.write("echoback> " + input);
 			} else {

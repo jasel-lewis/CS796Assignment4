@@ -57,6 +57,12 @@ public class Connection {
 	
 	
 	
+	public int getLocalPort() {
+		return socket.getLocalPort();
+	}
+	
+	
+	
 	public ClientType getType() {
 		return clientType;
 	}

@@ -81,7 +81,7 @@ public class ClientView extends JFrame {
 			)
 		);
 		
-		JLabel ipAddressLabel = new JLabel("IP Address:");
+		JLabel ipAddressLabel = new JLabel("IPv4 Address:");
 		connectControlPanel.add(ipAddressLabel, "2, 1, right, default");
 		
 		ipAddressTextField = new JTextField();
@@ -122,11 +122,12 @@ public class ClientView extends JFrame {
 		inputControlPanel.setLayout(new BorderLayout(10, 0));
 		
 		messageField = new JTextField();
+		messageField.addActionListener(new SendAction());
+		messageField.setColumns(10);  // TODO: is this line needed??
 		inputControlPanel.add(messageField, BorderLayout.CENTER);
-		messageField.setColumns(10);
 		
 		sendButton = new JButton("Send");
-		sendButton.addActionListener(new SendClick());
+		sendButton.addActionListener(new SendAction());
 		sendButton.setEnabled(false);
 		inputControlPanel.add(sendButton, BorderLayout.EAST);
 		
@@ -199,15 +200,10 @@ public class ClientView extends JFrame {
 	
 	
 	
-	private class SendClick implements ActionListener {
+	private class SendAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String message = messageField.getText();
-			
-			if (!message.equals("")) {
-				getController().handleSendClick(messageField.getText());
-				messageField.setText("");
-			}
+			getController().handleSendClick(messageField.getText());
 		}
 	}
 	
@@ -221,7 +217,13 @@ public class ClientView extends JFrame {
 	
 	
 	
-	public void appendToLog(String text) {
+	public void clearMessage() {
+		messageField.setText("");
+	}
+	
+	
+	
+	public void writeToLog(String text) {
 		log.append(text);
 		
 		if (!clearLogEnabled) {
@@ -231,7 +233,7 @@ public class ClientView extends JFrame {
 	
 	
 	
-	public void configureForConnectState(boolean connected) {
+	public void configureForConnectedState(boolean connected) {
 		if (connected) {
 			connectButton.setText("Disconnect");
 

@@ -63,7 +63,7 @@ public class ServerController {
 	
 	
 	public synchronized void writeToLog(String text) {
-		view.appendToLog(text + "\n");
+		view.writeToLog(text + "\n");
 	}
 
 

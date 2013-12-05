@@ -261,7 +261,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
-	public void appendToLog(String text) {
+	public void writeToLog(String text) {
 		log.append(text);
 		
 		if (!clearLogEnabled) {
