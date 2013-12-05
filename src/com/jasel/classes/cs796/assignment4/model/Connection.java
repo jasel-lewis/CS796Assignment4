@@ -87,7 +87,6 @@ public class Connection {
 			} catch (IOException ioe) {
 				if (!socket.isInputShutdown()) {
 					System.err.println("Could not call readLine() on the Socket's BufferedReader.");
-					System.exit(-1);
 				}
 			}
 		} catch (IOException ioe) {
@@ -121,6 +120,12 @@ public class Connection {
 
 	public void close() throws IOException {
 		socket.close();
+	}
+	
+	
+	
+	public void shutdownInput() throws IOException {
+		socket.shutdownInput();
 	}
 	
 	

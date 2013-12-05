@@ -1,13 +1,18 @@
 package com.jasel.classes.cs796.assignment4.view;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JTextArea;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+
 import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +22,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
@@ -26,6 +32,7 @@ import com.jasel.classes.cs796.assignment4.controller.ClientController;
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 
 import javax.swing.SpinnerNumberModel;
+import javax.swing.JTextPane;
 
 public class ClientView extends JFrame {
 	private static final long serialVersionUID = -8465970805529299589L;
@@ -38,10 +45,11 @@ public class ClientView extends JFrame {
 	private JSpinner portSpinner;
 	private JComboBox<ClientType> clientTypeCombo;
 	private JButton connectButton;
-	private JTextArea log;
+	private JTextPane log;
 	private JButton clearLogButton;
 	private JTextField messageField;
 	private JButton sendButton;
+	private StyleContext styleContext;
 
 
 	/**
@@ -51,7 +59,7 @@ public class ClientView extends JFrame {
 		this.defaultPort = defaultPort;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 370);
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -122,6 +130,7 @@ public class ClientView extends JFrame {
 		inputControlPanel.setLayout(new BorderLayout(10, 0));
 		
 		messageField = new JTextField();
+		messageField.setEnabled(false);
 		messageField.addActionListener(new SendAction());
 		messageField.setColumns(10);  // TODO: is this line needed??
 		inputControlPanel.add(messageField, BorderLayout.CENTER);
@@ -145,7 +154,7 @@ public class ClientView extends JFrame {
 		JScrollPane logScrollPane = new JScrollPane();
 		contentPane.add(logScrollPane, BorderLayout.CENTER);
 		
-		log = new JTextArea();
+		log = new JTextPane();
 		log.setEditable(false);
 		logScrollPane.setViewportView(log);
 	}
@@ -223,8 +232,27 @@ public class ClientView extends JFrame {
 	
 	
 	
-	public void writeToLog(String text) {
-		log.append(text);
+//	public void writeToLog(String text) {
+//		log.append(text);
+//		
+//		if (!clearLogEnabled) {
+//			clearLogButton.setEnabled(true);
+//		}
+//	}
+	
+	
+	
+	public void writeToLog(String message, MessageType messageType) {
+		styleContext = StyleContext.getDefaultStyleContext();
+		AttributeSet attribSet = styleContext.addAttribute(
+				SimpleAttributeSet.EMPTY,
+				StyleConstants.Foreground,
+				messageType.getColor()
+		);
+		
+		log.setCaretPosition(log.getDocument().getLength());
+		log.setCharacterAttributes(attribSet, false);
+		log.replaceSelection(message);
 		
 		if (!clearLogEnabled) {
 			clearLogButton.setEnabled(true);
@@ -234,6 +262,8 @@ public class ClientView extends JFrame {
 	
 	
 	public void configureForConnectedState(boolean connected) {
+		connectButton.setEnabled(true);
+		
 		if (connected) {
 			connectButton.setText("Disconnect");
 
@@ -252,6 +282,22 @@ public class ClientView extends JFrame {
 			ipAddressTextField.setEnabled(true);
 			portSpinner.setEnabled(true);
 			clientTypeCombo.setEnabled(true);
+		}
+	}
+	
+	
+	
+	public void configureForConnectingState(boolean connecting) {
+		if (connecting) {
+			connectButton.setEnabled(false);
+			
+			connectButton.setText("Connecting...");
+			
+			ipAddressTextField.setEnabled(false);
+			portSpinner.setEnabled(false);
+			clientTypeCombo.setEnabled(false);
+		} else {
+			configureForConnectedState(false);
 		}
 	}
 }

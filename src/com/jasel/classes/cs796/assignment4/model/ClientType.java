@@ -5,7 +5,6 @@ package com.jasel.classes.cs796.assignment4.model;
 
 /**
  * @author Jasel
- *
  */
 public enum ClientType {
 	NORMAL, URGENT;

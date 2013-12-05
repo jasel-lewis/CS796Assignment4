@@ -12,6 +12,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 import com.jasel.classes.cs796.assignment4.view.ClientView;
+import com.jasel.classes.cs796.assignment4.view.MessageType;
 
 /**
  * @author Jasel
@@ -51,7 +52,7 @@ public class ClientController {
 	
 	
 	public void handleSendClick(String message) {
-		if (!message.equals("")) {
+		if (!message.equals("") && (clientSocketManager != null)) {
 			view.clearMessage();
 			clientSocketManager.writeToConnection(message);
 		}
@@ -67,7 +68,7 @@ public class ClientController {
 	
 	
 	
-	private void disconnect() {
+	protected void disconnect() {
 		if ((thread != null) && (clientSocketManager != null)) {
 			clientSocketManager.terminate();
 			
@@ -77,6 +78,8 @@ public class ClientController {
 				;  // Do nothing - normal Exception if interrupted
 			}
 			
+			writeToLog("Disconnected from UNOServer", MessageType.INFORMATIONAL);
+			
 			clientSocketManager = null;
 		}
 	}
@@ -84,15 +87,15 @@ public class ClientController {
 	
 	
 	public void errorHelper(Exception exception, String preText) {
-		String message = exception.getMessage();
+		String message = exception.getLocalizedMessage();
 		
-		view.writeToLog(preText + ((message.equals("")) ? "" : (": " + message)));
+		writeToLog(preText + ((message.equals("")) ? "" : (": " + message)), MessageType.ERROR);
 	}
 	
 	
 	
-	public synchronized void writeToLog(String text) {
-		view.writeToLog(text + "\n");
+	public synchronized void writeToLog(String message, MessageType messageType) {
+		view.writeToLog(message + "\n", messageType);
 	}
 
 
@@ -111,5 +114,11 @@ public class ClientController {
 	
 	public void configureViewForConnectedState(boolean connected) {
 		view.configureForConnectedState(connected);
+	}
+	
+	
+	
+	public void configureViewForConnectingState(boolean connecting) {
+		view.configureForConnectingState(connecting);
 	}
 }

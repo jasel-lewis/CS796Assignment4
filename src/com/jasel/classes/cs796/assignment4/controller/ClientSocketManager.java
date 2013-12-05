@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 import com.jasel.classes.cs796.assignment4.model.Connection;
+import com.jasel.classes.cs796.assignment4.view.MessageType;
 
 /**
  * @author Jasel
@@ -41,12 +42,15 @@ public class ClientSocketManager implements Runnable {
 		running = true;
 
 		try {
+			controller.configureViewForConnectingState(true);
 			connection = new Connection(serverInetAddress, serverPort);
 			controller.configureViewForConnectedState(true);
 			isConnected = true;
-			controller.writeToLog("Established connection with UNOServer as a " + clientType + " client");
+			controller.writeToLog("Established connection with UNOServer as a " + clientType + " client", MessageType.INFORMATIONAL);
 		} catch (IOException ioe) {
-			controller.writeToLog("Unable to connect to UNOServer: connection refused");
+			controller.configureViewForConnectingState(false);
+			controller.errorHelper(ioe, "Unable to connect to UNOServer");
+			controller.disconnect();
 		}
 		
 		if (isConnected && clientType.equals(ClientType.NORMAL)) {
@@ -56,7 +60,7 @@ public class ClientSocketManager implements Runnable {
 				connection.close();
 				controller.configureViewForConnectedState(false);
 				isConnected = false;
-				controller.writeToLog("Closed connection to let it know this is a " + clientType + " client");
+				controller.writeToLog("Closed connection to let it know this is a " + clientType + " client", MessageType.WARNING);
 			} catch (IOException ioe) {
 				controller.errorHelper(ioe, "Could not close the connection");
 			}
@@ -65,10 +69,13 @@ public class ClientSocketManager implements Runnable {
 			// is the Socket which the UNOServer will call back on.
 			if (!isConnected) {
 				try {
+					controller.configureViewForConnectingState(true);
 					connection = new Connection((new ServerSocket(connection.getLocalPort())).accept());
+					controller.writeToLog("Received callback from UNOServer", MessageType.INFORMATIONAL);
 					controller.configureViewForConnectedState(true);
 					isConnected = true;
 				} catch (IOException ioe) {
+					controller.configureViewForConnectingState(false);
 					controller.errorHelper(ioe, "Could not create a Socket for the UNOServer to call back to");
 				}
 			}
@@ -82,7 +89,7 @@ public class ClientSocketManager implements Runnable {
 					// Connection is dead
 					terminate();
 				} else {
-					controller.writeToLog(input);
+					controller.writeToLog(input, MessageType.NORMAL);
 				}
 				
 				input = connection.readLine();
@@ -94,6 +101,7 @@ public class ClientSocketManager implements Runnable {
 	
 	public void writeToConnection(String message) {
 		if (isConnected) {
+			controller.writeToLog("Sending: " + message, MessageType.INFORMATIONAL);
 			connection.write(message);
 		}
 	}
@@ -109,8 +117,12 @@ public class ClientSocketManager implements Runnable {
 		running = false;
 		
 		try {
-			connection.close();
-			isConnected = false;
+			if (isConnected) {
+				connection.shutdownInput();
+				connection.close();
+				isConnected = false;
+			}
+			
 			controller.configureViewForConnectedState(false);
 		} catch (IOException ioe) {
 			//TODO: this exception might actually be normal because we're closing the socket when readLine() is blocking
