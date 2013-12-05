@@ -48,14 +48,19 @@ public class ConnectionManager implements Runnable {
 			try {
 				model.removeConnection(connection);
 				controller.writeToLog("Connection closed with no message transmission - could be a Normal client - attempting to call back");
+				
+				// Create a new Connection back to the IP and port which was just connected to us
 				connection = new Connection(connection.getInetAddress(), connection.getPort());
 				connection.setType(Connection.NORMAL);
 				model.addConnection(connection);
 				controller.writeToLog("Normal client connected on " + connection);
 				input = connection.readLine();
 			} catch (IOException e) {
+				// Could not create the new Connection to call-back the client - must be that the
+				// client was an aborted Connection
 				running = false;
 				//TODO: may have to avoid the fall-through below to the closeConnection() call...
+				//TODO: not sure if we need this next System.err.println() message
 				System.err.println("Unable to create a return Connection to the (assumed) Normal client");
 			}
 		}

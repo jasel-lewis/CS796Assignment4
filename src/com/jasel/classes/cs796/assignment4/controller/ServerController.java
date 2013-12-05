@@ -65,7 +65,7 @@ public class ServerController {
 
 
 
-	public void handleClearLogButtonClick() {
+	public void handleClearLogClick() {
 		view.clearLog();
 	}
 }

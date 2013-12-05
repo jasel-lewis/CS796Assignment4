@@ -3,14 +3,11 @@ package com.jasel.classes.cs796.assignment4.view;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.text.ParseException;
 
 import javax.swing.Box;
@@ -44,16 +41,17 @@ public class ServerView extends JFrame implements TableModelListener {
 	private static final long serialVersionUID = -3579124248456596891L;
 	private static final int VIEWABLEROWS = 6;
 	
+	private int defaultPort = 0;
+	private boolean clearLogEnabled = false;
+	
 	private JPanel contentPane;
-	private JButton buttonClearLog, buttonListen;
+	private JButton clearLogButton, listenButton;
 	private JSpinner portSpinner;
 	private JTextArea log;
 	private ServerController controller;
-	private int defaultPort = 0;
 	private ConnectionTableModel tableModel;
 	private JTable table;
 	private JMenuItem menuItemClearLog;
-	private boolean clearLogEnabled = false;
 	private JMenuItem menuItemStartListening;
 	private JMenuItem menuItemStopListening;
 	
@@ -75,6 +73,8 @@ public class ServerView extends JFrame implements TableModelListener {
 		menuBar.add(menuFile);
 		
 		JMenuItem menuItemExit = new JMenuItem("Exit");
+		menuItemExit.setMnemonic('x');
+		menuItemExit.setMnemonic(KeyEvent.VK_X);
 		menuItemExit.addActionListener(new ExitClick());
 		menuItemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemExit);
@@ -84,12 +84,16 @@ public class ServerView extends JFrame implements TableModelListener {
 		menuBar.add(menuAction);
 		
 		menuItemStartListening = new JMenuItem("Start Listening");
-		menuItemStartListening.addActionListener(new ListenViewItemClick());
+		menuItemStartListening.setMnemonic('s');
+		menuItemStartListening.setMnemonic(KeyEvent.VK_S);
+		menuItemStartListening.addActionListener(new ListenItemClick());
 		menuItemStartListening.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menuAction.add(menuItemStartListening);
 		
 		menuItemStopListening = new JMenuItem("Stop Listening");
-		menuItemStopListening.addActionListener(new ListenViewItemClick());
+		menuItemStopListening.setMnemonic('p');
+		menuItemStopListening.setMnemonic(KeyEvent.VK_P);
+		menuItemStopListening.addActionListener(new ListenItemClick());
 		menuItemStopListening.setEnabled(false);
 		menuItemStopListening.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 		menuAction.add(menuItemStopListening);
@@ -98,9 +102,11 @@ public class ServerView extends JFrame implements TableModelListener {
 		menuAction.add(separator);
 		
 		menuItemClearLog = new JMenuItem("Clear Log");
+		menuItemClearLog.setMnemonic('l');
+		menuItemClearLog.setMnemonic(KeyEvent.VK_L);
 		menuItemClearLog.addActionListener(new ClearLogClick());
 		menuItemClearLog.setEnabled(false);
-		menuItemClearLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+		menuItemClearLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
 		menuAction.add(menuItemClearLog);
 		
 		Component menuHorizontalGlue = Box.createHorizontalGlue();
@@ -111,6 +117,8 @@ public class ServerView extends JFrame implements TableModelListener {
 		menuBar.add(menuHelp);
 		
 		JMenuItem menuItemAbout = new JMenuItem("About");
+		menuItemAbout.setMnemonic('a');
+		menuItemAbout.setMnemonic(KeyEvent.VK_A);
 		menuHelp.add(menuItemAbout);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -121,9 +129,9 @@ public class ServerView extends JFrame implements TableModelListener {
 		controlPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.add(controlPanel, BorderLayout.SOUTH);
 		
-		buttonClearLog = new JButton("Clear Log");
-		buttonClearLog.addActionListener(new ClearLogClick());
-		buttonClearLog.setEnabled(false);
+		clearLogButton = new JButton("Clear Log");
+		clearLogButton.addActionListener(new ClearLogClick());
+		clearLogButton.setEnabled(false);
 		
 		Component controlHorizontalGlue = Box.createHorizontalGlue();
 		
@@ -132,12 +140,11 @@ public class ServerView extends JFrame implements TableModelListener {
 		portSpinner.setModel(new SpinnerNumberModel(defaultPort, 1024, 65535, 1));
 		portSpinner.setEditor(new JSpinner.NumberEditor(portSpinner, "#"));
 		
-		buttonListen = new JButton("Start Listening");
-		buttonListen.setMnemonic('S');
-		buttonListen.addActionListener(new ListenViewItemClick());
+		listenButton = new JButton("Start Listening");
+		listenButton.addActionListener(new ListenItemClick());
 		
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
-		controlPanel.add(buttonClearLog);
+		controlPanel.add(clearLogButton);
 		controlPanel.add(controlHorizontalGlue);
 		
 		JLabel labelPort = new JLabel("Port:");
@@ -146,7 +153,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		controlPanel.add(horizontalStrut);
-		controlPanel.add(buttonListen);
+		controlPanel.add(listenButton);
 		
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -204,7 +211,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
-	private class ListenViewItemClick implements ActionListener {
+	private class ListenItemClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int port = defaultPort;
@@ -239,7 +246,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	private class ClearLogClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			getController().handleClearLogButtonClick();
+			getController().handleClearLogClick();
 		}
 	}
 	
@@ -248,7 +255,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	public void clearLog() {
 		log.setText(null);
 		clearLogEnabled = false;
-		buttonClearLog.setEnabled(false);
+		clearLogButton.setEnabled(false);
 		menuItemClearLog.setEnabled(false);
 	}
 	
@@ -258,7 +265,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		log.append(text);
 		
 		if (!clearLogEnabled) {
-			buttonClearLog.setEnabled(true);
+			clearLogButton.setEnabled(true);
 			menuItemClearLog.setEnabled(true);
 		}
 	}
@@ -267,12 +274,12 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	public void configureForListeningState(boolean listening) {
 		if (listening) {
-			buttonListen.setText("Stop Listening");
+			listenButton.setText("Stop Listening");
 			menuItemStopListening.setEnabled(true);
 			menuItemStartListening.setEnabled(false);
 			portSpinner.setEnabled(false);
 		} else {
-			buttonListen.setText("Start Listening");
+			listenButton.setText("Start Listening");
 			menuItemStartListening.setEnabled(true);
 			menuItemStopListening.setEnabled(false);
 			portSpinner.setEnabled(true);
