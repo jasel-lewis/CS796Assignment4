@@ -4,6 +4,10 @@
 package com.jasel.classes.cs796.assignment4.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.jasel.classes.cs796.assignment4.model.ClientType;
 import com.jasel.classes.cs796.assignment4.model.Connection;
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 
@@ -51,7 +55,7 @@ public class ConnectionManager implements Runnable {
 				
 				// Create a new Connection back to the IP and port which was just connected to us
 				connection = new Connection(connection.getInetAddress(), connection.getPort());
-				connection.setType(Connection.NORMAL);
+				connection.setType(ClientType.NORMAL);
 				model.addConnection(connection);
 				controller.writeToLog("Normal client connected on " + connection);
 				input = connection.readLine();
@@ -68,7 +72,7 @@ public class ConnectionManager implements Runnable {
 		while(running) {
 			if (input != null) {
 				// Echo back the string
-				connection.write(input, false);
+				connection.write("echoback> " + input);
 			} else {
 				controller.writeToLog("Connection has terminated");
 				break;
@@ -92,7 +96,7 @@ public class ConnectionManager implements Runnable {
 		running = false;
 		
 		if (connection != null) {
-			connection.write("Server has terminated the connection.  Goodbye...", true);
+			connection.write(generateSystemMessage("Server has terminated the connection.  Goodbye..."));
 			closeConnection();
 		}
 	}
@@ -107,5 +111,14 @@ public class ConnectionManager implements Runnable {
 			System.err.println("Could not close the socket.  Runaway socket.");
 			e.printStackTrace();
 		}
+	}
+	
+	
+	
+	private String generateSystemMessage(String message) {
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+		
+		return " (" + sdf.format(date) + "):  " + message;
 	}
 }

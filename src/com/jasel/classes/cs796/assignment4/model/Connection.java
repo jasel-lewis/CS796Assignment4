@@ -11,22 +11,24 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author Jasel
- *
  */
 public class Connection {
-	public static final String URGENT = "Urgent";
-	public static final String NORMAL = "Normal";
-	
 	private Socket socket = null;
-	private String type = Connection.URGENT;
+	private ClientType clientType = null;
+	
 	
 	public Connection(Socket socket) {
+		this(socket, ClientType.URGENT);
+	}
+	
+	
+	
+	public Connection(Socket socket, ClientType clientType) {
 		this.socket = socket;
+		this.clientType = clientType;
 	}
 	
 	
@@ -55,14 +57,14 @@ public class Connection {
 	
 	
 	
-	public String getType() {
-		return type;
+	public ClientType getType() {
+		return clientType;
 	}
 
 
 
-	public void setType(String string) {
-		type = string;
+	public void setType(ClientType clientType) {
+		this.clientType = clientType;
 	}
 	
 	
@@ -93,38 +95,16 @@ public class Connection {
 	
 	
 	/**
-	 * Write to the Socket.  If isServerMessage is TRUE, the message is specially
-	 * formatted as an alert to the client from the server (vice a simple echo-back).
+	 * Write out to the underlying Socket
 	 * 
-	 * @param str
-	 * @param isServerMessage
+	 * @param message
 	 */
-	public void write(String str, boolean isServerMessage) {
+	public void write(String message) {
 		PrintWriter pw = null;
-		StringBuilder sb = new StringBuilder();
-
-		if (isServerMessage) {
-			Date date = new Date();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-			
-			sb.append(" (");
-			sb.append(sdf.format(date));
-			sb.append("):  ");
-		} else {
-			sb.append("echoback> ");
-		}
-
-		sb.append(str);
-
+		
 		try {
 			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-
-			pw.println(sb);
-
-			// Closing pw here after we're done using it seems like the right thing to do. The messed
-			// up thing is that if we close it, we kill the connection and our next call to br.readLine()
-			// fails in the while loop up above in run() (which we return to).
-			// pw.close();
+			pw.println(message);
 		} catch (IOException ioe) {
 			System.err.println(ioe);
 			System.err.println("Could not open a PrintWriter to the socket: " + socket.toString() + ".");
