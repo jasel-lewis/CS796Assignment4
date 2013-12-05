@@ -37,7 +37,8 @@ import javax.swing.JTextPane;
 public class ClientView extends JFrame {
 	private static final long serialVersionUID = -8465970805529299589L;
 	
-	private int defaultPort = 0;
+	private String defaultIPString;
+	private int defaultPort;
 	private boolean clearLogEnabled = false;
 	private ClientController controller = null;
 	
@@ -55,7 +56,8 @@ public class ClientView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ClientView(int defaultPort) {
+	public ClientView(String defaultIPString, int defaultPort) {
+		this.defaultIPString = defaultIPString;
 		this.defaultPort = defaultPort;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,6 +95,7 @@ public class ClientView extends JFrame {
 		connectControlPanel.add(ipAddressLabel, "2, 1, right, default");
 		
 		ipAddressTextField = new JTextField();
+		ipAddressTextField.setText(defaultIPString);
 		connectControlPanel.add(ipAddressTextField, "4, 1, fill, default");
 		ipAddressTextField.setColumns(10);
 		
@@ -232,26 +235,20 @@ public class ClientView extends JFrame {
 	
 	
 	
-//	public void writeToLog(String text) {
-//		log.append(text);
-//		
-//		if (!clearLogEnabled) {
-//			clearLogButton.setEnabled(true);
-//		}
-//	}
-	
-	
-	
+	//TODO: Remove this: http://stackoverflow.com/questions/9650992/how-to-change-text-color-in-the-jtextarea
 	public void writeToLog(String message, MessageType messageType) {
 		styleContext = StyleContext.getDefaultStyleContext();
-		AttributeSet attribSet = styleContext.addAttribute(
+		AttributeSet attributeSet = styleContext.addAttribute(
 				SimpleAttributeSet.EMPTY,
 				StyleConstants.Foreground,
 				messageType.getColor()
 		);
 		
+//		attributeSet = styleContext.addAttribute(attributeSet, StyleConstants.FontFamily, "Lucida Console");
+//		attributeSet = styleContext.addAttribute(attributeSet, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+		
 		log.setCaretPosition(log.getDocument().getLength());
-		log.setCharacterAttributes(attribSet, false);
+		log.setCharacterAttributes(attributeSet, false);
 		log.replaceSelection(message);
 		
 		if (!clearLogEnabled) {

@@ -13,7 +13,8 @@ import com.jasel.classes.cs796.assignment4.view.CloseListener;
  * @author Jasel
  */
 public class unoclient {
-	protected static final int DEFAULTPORT = 8008;
+	protected final static String DEFAULTIP = "127.0.0.1"; 
+	protected final static int DEFAULTPORT = 8008;
 
 	/**
 	 * @param args
@@ -26,7 +27,7 @@ public class unoclient {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ClientView view = new ClientView(DEFAULTPORT);
+					ClientView view = new ClientView(DEFAULTIP, DEFAULTPORT);
 					ClientController controller = new ClientController(view);
 					
 					view.setController(controller);
