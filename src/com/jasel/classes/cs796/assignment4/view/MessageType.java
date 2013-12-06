@@ -10,6 +10,7 @@ import java.awt.Color;
  */
 public enum MessageType {
 	NORMAL,			// Normal messages
+	SUBDUED,		// Subdued messages
 	INFORMATIONAL,  // Informational messages
 	WARNING,		// Warning messages
 	ERROR;			// Error messages
@@ -19,21 +20,22 @@ public enum MessageType {
 		Color color = null;
 		
 		switch (this) {
-		case NORMAL:
-			color = Color.BLACK;
-			break;
-		case INFORMATIONAL:
-			color = Color.BLUE;
-			break;
-		case WARNING:
-			color = Color.YELLOW;
-			break;
-		case ERROR:
-			color = Color.RED;
-			break;
-		default:
-			color = Color.DARK_GRAY;
-			break;
+			case INFORMATIONAL:
+				color = Color.BLUE;
+				break;
+			case WARNING:
+				color = Color.ORANGE;
+				break;
+			case ERROR:
+				color = Color.RED;
+				break;
+			case SUBDUED:
+				color = Color.LIGHT_GRAY;
+				break;
+			case NORMAL:
+			default:
+				color = Color.BLACK;
+				break;
 		}
 		
 		return color;

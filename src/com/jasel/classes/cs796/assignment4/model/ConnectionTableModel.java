@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ConnectionTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 4063686823137272854L;
-	private String[] columnNames = {"IP Address", "Port", "Type"};
+	private String[] columnNames = {"Client IP Address", "Client Port", "Client Type"};
 	private Vector<Connection> connections = new Vector<Connection>();
 	
 	public Vector<Connection> getConnections() {

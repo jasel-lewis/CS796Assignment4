@@ -8,8 +8,6 @@ import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.validator.routines.InetAddressValidator;
-
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 import com.jasel.classes.cs796.assignment4.view.ClientView;
 import com.jasel.classes.cs796.assignment4.view.MessageType;
@@ -33,18 +31,12 @@ public class ClientController {
 		if (clientSocketManager != null) {
 			disconnect();
 		} else {
-			// Validate the user-provided IPv4 address
-			if (InetAddressValidator.getInstance().isValidInet4Address(unverifiedIPAddress)) {
-				try {
-					connect(InetAddress.getByName(unverifiedIPAddress), port, clientType);
-				} catch (UnknownHostException e) {
-					// TODO: Create pop-up stating unknown host
-					renderWarningDialog("Unknown Host",
-							"The provided IP address cannot be resolved to a valid host");
-				}
-			} else {
-				renderWarningDialog("Invalid IPv4 Address",
-						"The provided IP address is not in a valid IPv4 format");
+			try {
+				connect(InetAddress.getByName(unverifiedIPAddress), port, clientType);
+			} catch (UnknownHostException e) {
+				// TODO: Create pop-up stating unknown host
+				renderWarningDialog("Unknown Host",
+						"The provided IP address cannot be resolved to a valid host");
 			}
 		}
 	}

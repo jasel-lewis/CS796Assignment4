@@ -101,7 +101,7 @@ public class ClientSocketManager implements Runnable {
 	
 	public void writeToConnection(String message) {
 		if (isConnected) {
-			controller.writeToLog("Sending: " + message, MessageType.INFORMATIONAL);
+			controller.writeToLog("Sending: " + message, MessageType.SUBDUED);
 			connection.write(message);
 		}
 	}

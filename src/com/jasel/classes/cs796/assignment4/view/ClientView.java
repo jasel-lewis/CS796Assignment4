@@ -1,14 +1,14 @@
 package com.jasel.classes.cs796.assignment4.view;
 
 import java.awt.BorderLayout;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -37,7 +37,7 @@ import javax.swing.JTextPane;
 public class ClientView extends JFrame {
 	private static final long serialVersionUID = -8465970805529299589L;
 	
-	private String defaultIPString;
+	private String defaultAddress;
 	private int defaultPort;
 	private boolean clearLogEnabled = false;
 	private ClientController controller = null;
@@ -50,18 +50,18 @@ public class ClientView extends JFrame {
 	private JButton clearLogButton;
 	private JTextField messageField;
 	private JButton sendButton;
-	private StyleContext styleContext;
+	private StyledDocument document;
 
 
 	/**
 	 * Create the frame.
 	 */
-	public ClientView(String defaultIPString, int defaultPort) {
-		this.defaultIPString = defaultIPString;
+	public ClientView(String defaultAddress, int defaultPort) {
+		this.defaultAddress = defaultAddress;
 		this.defaultPort = defaultPort;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 370);
+		setBounds(100, 100, 577, 370);
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -91,11 +91,11 @@ public class ClientView extends JFrame {
 			)
 		);
 		
-		JLabel ipAddressLabel = new JLabel("IPv4 Address:");
+		JLabel ipAddressLabel = new JLabel("UNOServer Address:");
 		connectControlPanel.add(ipAddressLabel, "2, 1, right, default");
 		
 		ipAddressTextField = new JTextField();
-		ipAddressTextField.setText(defaultIPString);
+		ipAddressTextField.setText(defaultAddress);
 		connectControlPanel.add(ipAddressTextField, "4, 1, fill, default");
 		ipAddressTextField.setColumns(10);
 		
@@ -160,6 +160,9 @@ public class ClientView extends JFrame {
 		log = new JTextPane();
 		log.setEditable(false);
 		logScrollPane.setViewportView(log);
+		
+		document = log.getStyledDocument();
+		addStylesToDocument(document);
 	}
 	
 	
@@ -235,24 +238,28 @@ public class ClientView extends JFrame {
 	
 	
 	
-	//TODO: Remove this: http://stackoverflow.com/questions/9650992/how-to-change-text-color-in-the-jtextarea
 	public void writeToLog(String message, MessageType messageType) {
-		styleContext = StyleContext.getDefaultStyleContext();
-		AttributeSet attributeSet = styleContext.addAttribute(
-				SimpleAttributeSet.EMPTY,
-				StyleConstants.Foreground,
-				messageType.getColor()
-		);
-		
-//		attributeSet = styleContext.addAttribute(attributeSet, StyleConstants.FontFamily, "Lucida Console");
-//		attributeSet = styleContext.addAttribute(attributeSet, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
-		
-		log.setCaretPosition(log.getDocument().getLength());
-		log.setCharacterAttributes(attributeSet, false);
-		log.replaceSelection(message);
+		try {
+			document.insertString(document.getLength(), message, document.getStyle(messageType.name()));
+		} catch (BadLocationException ble) {
+			System.err.println("Couldn't insert initial message into log");
+		}
 		
 		if (!clearLogEnabled) {
 			clearLogButton.setEnabled(true);
+			clearLogEnabled = true;
+		}
+	}
+	
+	
+	
+	private void addStylesToDocument(StyledDocument document) {
+		Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		Style style = null;
+		
+		for (MessageType messageType : MessageType.values()) {
+			style = document.addStyle(messageType.name(), defaultStyle);
+			StyleConstants.setForeground(style, messageType.getColor());
 		}
 	}
 	

@@ -40,7 +40,7 @@ public class Connection {
 	
 	
 	public String getIPv4() {
-		return getInetAddress().toString();
+		return getInetAddress().getHostAddress();
 	}
 	
 	
