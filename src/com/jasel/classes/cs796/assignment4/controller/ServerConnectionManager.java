@@ -16,7 +16,6 @@ import com.jasel.classes.cs796.assignment4.view.MessageType;
 public class ServerConnectionManager implements Runnable {
 	private ServerController controller = null;
 	private ClientTableModel model = null;
-//	private Connection connection = null;
 	private Client client = null;
 	private volatile boolean running = false;
 	

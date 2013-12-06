@@ -32,7 +32,6 @@ public class ClientController {
 	 */
 	public void handleConnectClick(String unverifiedIPAddress, int port, ClientType clientType) {
 		if (clientSocketManager != null) {
-System.err.println("in hadle clikc - disconnect");
 			disconnect();
 		} else {
 			try {
