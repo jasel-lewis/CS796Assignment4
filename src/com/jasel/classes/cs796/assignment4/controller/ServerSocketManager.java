@@ -2,6 +2,7 @@ package com.jasel.classes.cs796.assignment4.controller;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,8 @@ public class ServerSocketManager implements Runnable {
 				thread = new Thread(serverConnectionManager);
 				threads.add(thread);
 				thread.start();
+			} catch (SocketException se) {
+				;  // Do nothing - normal when we kill this thread
 			} catch (IOException ioe) {
 				controller.writeToLog("Could not accept a new connection", MessageType.ERROR);
 				ioe.printStackTrace();
@@ -68,16 +71,16 @@ public class ServerSocketManager implements Runnable {
 	 * Terminate all ConnectionManagers and their underlying Clients
 	 */
 	public void terminate() {
-		int csmlSize = serverConnectionManagers.size();
+		int scmlSize = serverConnectionManagers.size();
 		int tlSize = threads.size();
 		
 		running = false;
 		
-		if (csmlSize != tlSize) {
-			System.err.println("ClientSocketManager List and client Thread List out of synch - aborting...");
+		if (scmlSize != tlSize) {
+			System.err.println("ServerConnectionManager List and client Thread List out of synch - aborting...");
 			System.exit(2);
 		} else {
-			for (int i = 0; i < csmlSize; i++) {
+			for (int i = 0; i < scmlSize; i++) {
 				serverConnectionManagers.get(i).terminate();
 				
 				try {

@@ -48,7 +48,7 @@ public class ClientSocketManager implements Runnable {
 		} catch (IOException ioe) {
 			controller.configureViewForConnectingState(false);
 			controller.errorHelper(ioe, "Unable to connect to UNOServer");
-			controller.disconnect();
+//			controller.disconnect();
 		}
 		
 		if (isConnected && clientType.equals(ClientType.NORMAL)) {
@@ -84,9 +84,10 @@ public class ClientSocketManager implements Runnable {
 			String input = connection.readLine();
 			
 			while (running) {
-				if (input.equals("")) {
+				if (input == null) {
 					// Connection is dead
-					terminate();
+					//terminate();
+					break;
 				} else {
 					controller.writeToLog(input, MessageType.NORMAL);
 				}
@@ -94,6 +95,8 @@ public class ClientSocketManager implements Runnable {
 				input = connection.readLine();
 			}
 		}
+		
+		controller.disconnect();
 	}
 	
 	
