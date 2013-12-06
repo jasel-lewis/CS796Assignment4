@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -162,8 +163,13 @@ public class ClientView extends JFrame {
 		log.setEditable(false);
 		logScrollPane.setViewportView(log);
 		
+		// Add styles to the underlying document so we can colorize
 		document = log.getStyledDocument();
 		addStylesToDocument(document);
+		
+		// Adjust the caret so we're always appending at the end
+//		DefaultCaret caret = (DefaultCaret)log.getCaret();
+//		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 	}
 	
 	
@@ -251,9 +257,19 @@ public class ClientView extends JFrame {
 	
 	
 	
+	/**
+	 * Colorize the message according to the MessageType and append the message into
+	 * the log.  This also enables the Clear Log button if it wasn't already.
+	 * @param message
+	 * @param messageType
+	 */
 	public void writeToLog(String message, MessageType messageType) {
 		try {
 			document.insertString(document.getLength(), message, document.getStyle(messageType.name()));
+			
+			// Position the caret at the end of the text to keep the surrounding
+			// ScrollPane scrolled to the bottom
+			log.setCaretPosition(document.getLength());
 		} catch (BadLocationException ble) {
 			System.err.println("Couldn't insert initial message into log");
 		}

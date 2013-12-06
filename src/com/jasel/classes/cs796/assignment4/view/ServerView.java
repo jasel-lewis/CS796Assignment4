@@ -281,9 +281,20 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
+	/**
+	 * Colorize the message according to the MessageType and append the message into
+	 * the log.  This also enables the Clear Log button and menu item if it wasn't
+	 * already.
+	 * @param message
+	 * @param messageType
+	 */
 	public void writeToLog(String message, MessageType messageType) {
 		try {
 			document.insertString(document.getLength(), message, document.getStyle(messageType.name()));
+			
+			// Position the caret at the end of the text to keep the surrounding
+			// ScrollPane scrolled to the bottom
+			log.setCaretPosition(document.getLength());
 		} catch (BadLocationException ble) {
 			System.err.println("Couldn't insert initial message into log");
 		}
