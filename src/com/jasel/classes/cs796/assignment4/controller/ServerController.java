@@ -4,6 +4,7 @@
 package com.jasel.classes.cs796.assignment4.controller;
 
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.view.MessageType;
 import com.jasel.classes.cs796.assignment4.view.ServerView;
 
 
@@ -62,8 +63,8 @@ public class ServerController {
 	
 	
 	
-	public synchronized void writeToLog(String text) {
-		view.writeToLog(text + "\n");
+	public synchronized void writeToLog(String message, MessageType messageType) {
+		view.writeToLog(message + "\n", messageType);
 	}
 
 

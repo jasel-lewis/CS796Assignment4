@@ -21,7 +21,7 @@ public class Connection {
 	
 	
 	public Connection(Socket socket) {
-		this(socket, ClientType.URGENT);
+		this(socket, ClientType.UNSPECIFIED);
 	}
 	
 	
@@ -137,6 +137,6 @@ public class Connection {
 	
 	
 	public String toString() {
-		return (getType() + " client" + (hasConnection() ? "" : " not") + " connected on " + socket);
+		return (getType() + " connection from " + socket);
 	}
 }

@@ -60,7 +60,7 @@ public class ClientSocketManager implements Runnable {
 				connection.close();
 				controller.configureViewForConnectedState(false);
 				isConnected = false;
-				controller.writeToLog("Closed connection to let it know this is a " + clientType + " client", MessageType.WARNING);
+				controller.writeToLog("Closed connection to let UNOServer know this is a " + clientType + " client", MessageType.WARNING);
 			} catch (IOException ioe) {
 				controller.errorHelper(ioe, "Could not close the connection");
 			}

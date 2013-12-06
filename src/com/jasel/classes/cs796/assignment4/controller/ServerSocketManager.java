@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.jasel.classes.cs796.assignment4.model.Connection;
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.view.MessageType;
 
 /**
  * @author Jasel
@@ -28,7 +29,7 @@ public class ServerSocketManager implements Runnable {
 			this.controller = controller;
 			this.model = model;
 			serverSocket = new ServerSocket(port);
-			controller.writeToLog("Created server socket: " + serverSocket);
+			controller.writeToLog("Created server socket: " + serverSocket, MessageType.SUBDUED);
 		} catch (IOException e) {
 			System.err.println("Cannot create ServerSocket on port " + port);
 			e.printStackTrace();
@@ -45,7 +46,7 @@ public class ServerSocketManager implements Runnable {
 		
 		running = true;
 		
-		controller.writeToLog("Server socket listening");
+		controller.writeToLog("Server socket listening", MessageType.SUBDUED);
 		
 		while(running) {
 			try {
@@ -58,7 +59,7 @@ public class ServerSocketManager implements Runnable {
 				thread.start();
 				threads.add(thread);
 			} catch (IOException ioe) {
-				System.err.println("Could not accept() a new client connection");
+				controller.writeToLog("Could not accept a new client connection", MessageType.ERROR);
 				ioe.printStackTrace();
 			}
 		}
@@ -92,7 +93,7 @@ public class ServerSocketManager implements Runnable {
 				System.err.println("Could not close ServerSocket");
 			}
 			
-			controller.writeToLog("Server socket closed");
+			controller.writeToLog("Server socket closed", MessageType.WARNING);
 		}
 	}
 }

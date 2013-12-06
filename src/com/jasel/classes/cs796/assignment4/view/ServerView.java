@@ -22,19 +22,24 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 import com.jasel.classes.cs796.assignment4.controller.ServerController;
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 
 
 public class ServerView extends JFrame implements TableModelListener {
@@ -47,13 +52,14 @@ public class ServerView extends JFrame implements TableModelListener {
 	private JPanel contentPane;
 	private JButton clearLogButton, listenButton;
 	private JSpinner portSpinner;
-	private JTextArea log;
+	private JTextPane log;
 	private ServerController controller;
 	private ConnectionTableModel tableModel;
 	private JTable table;
 	private JMenuItem menuItemClearLog;
 	private JMenuItem menuItemStartListening;
 	private JMenuItem menuItemStopListening;
+	private StyledDocument document;
 	
 
 	/**
@@ -63,7 +69,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		this.defaultPort = defaultPort;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 400);
+		setBounds(100, 100, 551, 400);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -165,9 +171,11 @@ public class ServerView extends JFrame implements TableModelListener {
 		JScrollPane logScrollPane = new JScrollPane();
 		splitPane.setRightComponent(logScrollPane);
 		
-		log = new JTextArea();
-		log.setTabSize(4);
+		log = new JTextPane();
 		log.setEditable(false);
+		
+		document = log.getStyledDocument();
+		addStylesToDocument(document);
 		
 		logScrollPane.setViewportView(log);
 		
@@ -182,6 +190,18 @@ public class ServerView extends JFrame implements TableModelListener {
 		table.setEnabled(false);
 		
 		tableScrollPane.setViewportView(table);
+	}
+	
+	
+	
+	private void addStylesToDocument(StyledDocument document) {
+		Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		Style style = null;
+		
+		for (MessageType messageType : MessageType.values()) {
+			style = document.addStyle(messageType.name(), defaultStyle);
+			StyleConstants.setForeground(style, messageType.getColor());
+		}
 	}
 	
 	
@@ -261,12 +281,16 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
-	public void writeToLog(String text) {
-		log.append(text);
+	public void writeToLog(String message, MessageType messageType) {
+		try {
+			document.insertString(document.getLength(), message, document.getStyle(messageType.name()));
+		} catch (BadLocationException ble) {
+			System.err.println("Couldn't insert initial message into log");
+		}
 		
 		if (!clearLogEnabled) {
 			clearLogButton.setEnabled(true);
-			menuItemClearLog.setEnabled(true);
+			clearLogEnabled = true;
 		}
 	}
 	

@@ -10,6 +10,7 @@ import java.util.Date;
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 import com.jasel.classes.cs796.assignment4.model.Connection;
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.view.MessageType;
 
 /**
  * @author Jasel
@@ -25,7 +26,9 @@ public class ConnectionManager implements Runnable {
 		this.model = model;
 		this.connection = connection;
 		model.addConnection(connection);
-		controller.writeToLog("Client connected: " + connection);
+		controller.writeToLog(connection.toString(), MessageType.INFORMATIONAL);
+		controller.writeToLog("Connection is assumed to be Urgent at this point, won't know otherwise " +
+				"until the blocking call reading the socket returns", MessageType.SUBDUED);
 	}
 	
 	
@@ -37,9 +40,9 @@ public class ConnectionManager implements Runnable {
 		running = true;
 		
 		try {
-			// Pause half a second, giving the Connection a chance to close if it's
-			// a non-Urgent (Normal) client and open its own listening Socket
-			Thread.sleep(500);
+			// Pause a quarter of a second, giving the Connection a chance to close if
+			// it's a non-Urgent (Normal) client and open its own listening Socket
+			Thread.sleep(250);
 		} catch (InterruptedException e) {
 			;  // Do nothing
 		}
@@ -51,30 +54,29 @@ public class ConnectionManager implements Runnable {
 			// is now waiting to be called back or the Connection was aborted.
 			try {
 				model.removeConnection(connection);
-				controller.writeToLog("Connection closed with no message transmission - could be a Normal client - attempting to call back");
+				controller.writeToLog("Connection closed with no message transmission - could be a " +
+						"Normal client - attempting to call back", MessageType.WARNING);
 				
 				// Create a new Connection back to the IP and port which was just connected to us
 				connection = new Connection(connection.getInetAddress(), connection.getPort());
 				connection.setType(ClientType.NORMAL);
 				model.addConnection(connection);
-				controller.writeToLog("Normal client connected on " + connection);
+				controller.writeToLog(connection.toString(), MessageType.INFORMATIONAL);
 				input = connection.readLine();
 			} catch (IOException e) {
 				// Could not create the new Connection to call-back the client - must be that the
 				// client was an aborted Connection
 				running = false;
-				//TODO: may have to avoid the fall-through below to the closeConnection() call...
-				//TODO: not sure if we need this next System.err.println() message
-				System.err.println("Unable to create a return Connection to the (assumed) Normal client");
+				controller.writeToLog("Unable to create a return Connection to the (assumed) Normal client", MessageType.ERROR);
 			}
 		}
 
 		while(running) {
-			if (input != null) {  // TODO: better here is input.equals("") (or a negation thereof)
+			if (input != null) {
 				// Echo back the string
 				connection.write("echoback> " + input);
 			} else {
-				controller.writeToLog("Connection has terminated");
+				//controller.writeToLog("Connection has terminated", MessageType.ERROR);
 				break;
 			}
 			
@@ -82,7 +84,7 @@ public class ConnectionManager implements Runnable {
 		}
 		
 		closeConnection();
-		controller.writeToLog("Connection remotely terminated:  input=null?" + (input == null) + ";  running: " + running);
+		controller.writeToLog("Connection remotely terminated", MessageType.ERROR);
 	}
 	
 	

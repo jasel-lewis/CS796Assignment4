@@ -37,6 +37,7 @@ import javax.swing.JTextPane;
 public class ClientView extends JFrame {
 	private static final long serialVersionUID = -8465970805529299589L;
 	
+	@SuppressWarnings("unused")
 	private String defaultAddress;
 	private int defaultPort;
 	private boolean clearLogEnabled = false;
@@ -167,6 +168,18 @@ public class ClientView extends JFrame {
 	
 	
 	
+	private void addStylesToDocument(StyledDocument document) {
+		Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		Style style = null;
+		
+		for (MessageType messageType : MessageType.values()) {
+			style = document.addStyle(messageType.name(), defaultStyle);
+			StyleConstants.setForeground(style, messageType.getColor());
+		}
+	}
+	
+	
+	
 	public void setController(ClientController controller) {
 		this.controller = controller;
 	}
@@ -248,18 +261,6 @@ public class ClientView extends JFrame {
 		if (!clearLogEnabled) {
 			clearLogButton.setEnabled(true);
 			clearLogEnabled = true;
-		}
-	}
-	
-	
-	
-	private void addStylesToDocument(StyledDocument document) {
-		Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-		Style style = null;
-		
-		for (MessageType messageType : MessageType.values()) {
-			style = document.addStyle(messageType.name(), defaultStyle);
-			StyleConstants.setForeground(style, messageType.getColor());
 		}
 	}
 	
