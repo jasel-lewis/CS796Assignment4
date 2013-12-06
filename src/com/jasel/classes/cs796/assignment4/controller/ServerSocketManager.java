@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jasel.classes.cs796.assignment4.controller;
 
 import java.io.IOException;
@@ -67,6 +64,9 @@ public class ServerSocketManager implements Runnable {
 	
 	
 	
+	/**
+	 * Terminate all ConnectionManagers and their underlying Connections
+	 */
 	public void terminate() {
 		int csmlSize = connectionManagers.size();
 		int tlSize = threads.size();

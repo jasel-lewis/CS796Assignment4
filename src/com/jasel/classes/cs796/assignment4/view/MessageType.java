@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jasel.classes.cs796.assignment4.view;
 
 import java.awt.Color;
@@ -16,6 +13,10 @@ public enum MessageType {
 	ERROR;			// Error messages
 	
 	
+	/**
+	 * Return an associated Color for each MessageType
+	 * @return
+	 */
 	public Color getColor() {
 		Color color = null;
 		

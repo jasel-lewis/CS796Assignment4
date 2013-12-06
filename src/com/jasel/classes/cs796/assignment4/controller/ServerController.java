@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jasel.classes.cs796.assignment4.controller;
 
 import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
@@ -18,6 +15,7 @@ public class ServerController {
 	private ServerSocketManager serverSocketManager = null;
 	boolean isListening = false;
 
+	
 	public ServerController(ConnectionTableModel model, ServerView view) {
 		this.model = model;
 		this.view = view;
@@ -35,6 +33,11 @@ public class ServerController {
 	
 	
 	
+	/**
+	 * Start the server listening for incoming Connections.  Creates a ServerSocketManager
+	 * and runs it in its own thread
+	 * @param port
+	 */
 	private void startListening(int port) {
 		serverSocketManager = new ServerSocketManager(this, model, port);
 		thread = new Thread(serverSocketManager);
@@ -46,6 +49,9 @@ public class ServerController {
 	
 	
 	
+	/**
+	 * Stop the server from listening to established and incoming Connections
+	 */
 	private void stopListening() {
 		if (thread != null) {
 			serverSocketManager.terminate();
@@ -63,6 +69,11 @@ public class ServerController {
 	
 	
 	
+	/**
+	 * Write the passed message to the log
+	 * @param message
+	 * @param messageType
+	 */
 	public synchronized void writeToLog(String message, MessageType messageType) {
 		view.writeToLog(message + "\n", messageType);
 	}

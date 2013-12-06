@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jasel.classes.cs796.assignment4.controller;
 
 import java.io.IOException;
@@ -101,6 +98,10 @@ public class ClientSocketManager implements Runnable {
 	
 	
 	
+	/**
+	 * Write the passed message out to the Connection
+	 * @param message
+	 */
 	public void writeToConnection(String message) {
 		if (isConnected) {
 			controller.writeToLog("Sending: " + message, MessageType.SUBDUED);

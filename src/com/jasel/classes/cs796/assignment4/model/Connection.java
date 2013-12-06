@@ -75,6 +75,10 @@ public class Connection {
 	
 	
 	
+	/**
+	 * Read a line of input from the other end of this Connection
+	 * @return
+	 */
 	public String readLine() {
 		BufferedReader br = null;
 		String input = null;

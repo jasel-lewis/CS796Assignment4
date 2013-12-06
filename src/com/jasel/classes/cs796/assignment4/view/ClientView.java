@@ -5,7 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -166,14 +165,16 @@ public class ClientView extends JFrame {
 		// Add styles to the underlying document so we can colorize
 		document = log.getStyledDocument();
 		addStylesToDocument(document);
-		
-		// Adjust the caret so we're always appending at the end
-//		DefaultCaret caret = (DefaultCaret)log.getCaret();
-//		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 	}
 	
 	
 	
+	/**
+	 * Load up the log's (JTextPane) underlying StyledDocument with styles based off
+	 * of the MessageTypes.  Makes it much quicker and easier to apply the style when
+	 * appending new messages. 
+	 * @param document
+	 */
 	private void addStylesToDocument(StyledDocument document) {
 		Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 		Style style = null;
@@ -282,6 +283,11 @@ public class ClientView extends JFrame {
 	
 	
 	
+	/**
+	 * Enable/disable items within the view based on whether the client is in a
+	 * connected state or not.
+	 * @param connected
+	 */
 	public void configureForConnectedState(boolean connected) {
 		connectButton.setEnabled(true);
 		
@@ -308,6 +314,12 @@ public class ClientView extends JFrame {
 	
 	
 	
+	/**
+	 * Needed a way to keep the user from pressing the Connect button again or changing
+	 * any crucial input components if we were waiting on a long-running connection to
+	 * be established.
+	 * @param connecting
+	 */
 	public void configureForConnectingState(boolean connecting) {
 		if (connecting) {
 			connectButton.setEnabled(false);

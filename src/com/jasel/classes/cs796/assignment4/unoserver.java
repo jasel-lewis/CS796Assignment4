@@ -1,6 +1,3 @@
-/**
- * @author Jasel
- */
 package com.jasel.classes.cs796.assignment4;
 
 import java.awt.EventQueue;
@@ -9,6 +6,10 @@ import com.jasel.classes.cs796.assignment4.controller.ServerController;
 import com.jasel.classes.cs796.assignment4.view.CloseListener;
 import com.jasel.classes.cs796.assignment4.view.ServerView;
 
+
+/**
+ * @author Jasel
+ */
 public class unoserver {
 	protected static final int DEFAULTPORT = 8008;
 

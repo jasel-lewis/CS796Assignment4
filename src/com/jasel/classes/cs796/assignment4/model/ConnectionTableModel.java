@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jasel.classes.cs796.assignment4.model;
 
 import java.util.Vector;

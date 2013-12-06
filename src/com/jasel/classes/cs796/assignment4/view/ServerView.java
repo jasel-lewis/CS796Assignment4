@@ -194,6 +194,12 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
+	/**
+	 * Load up the log's (JTextPane) underlying StyledDocument with styles based off
+	 * of the MessageTypes.  Makes it much quicker and easier to apply the style when
+	 * appending new messages. 
+	 * @param document
+	 */
 	private void addStylesToDocument(StyledDocument document) {
 		Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 		Style style = null;
@@ -206,6 +212,10 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
+	/**
+	 * Set the area displaying the list of connected clients to be a strategic multiple
+	 * of the calculated row heights.  Multiple is based on VIEWABLEROWS.
+	 */
 	public void setViewportHeight() {
 		double width = table.getPreferredSize().getWidth();
 		int headerHeight = table.getTableHeader().getHeight();
@@ -308,6 +318,11 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
+	/**
+	 * Enable/disable items within the view based on whether the server is in a
+	 * listening state or not.
+	 * @param listening
+	 */
 	public void configureForListeningState(boolean listening) {
 		if (listening) {
 			listenButton.setText("Stop Listening");
@@ -326,7 +341,7 @@ public class ServerView extends JFrame implements TableModelListener {
 
 	@Override
 	public void tableChanged(TableModelEvent event) {
-		;  //TODO: Do nothing? - how does the JTable get notified to update its view?
+		;
 	}
 	
 	

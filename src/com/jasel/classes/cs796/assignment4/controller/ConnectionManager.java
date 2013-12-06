@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.jasel.classes.cs796.assignment4.controller;
 
 import java.io.IOException;
@@ -20,6 +17,7 @@ public class ConnectionManager implements Runnable {
 	private ConnectionTableModel model = null;
 	private Connection connection = null;
 	private volatile boolean running = false;
+	
 	
 	public ConnectionManager(ServerController controller, ConnectionTableModel model, Connection connection) {
 		this.controller = controller;
@@ -105,6 +103,10 @@ public class ConnectionManager implements Runnable {
 	
 	
 	
+	/**
+	 * Helper utility to close the Connection and ensure removal of the Connection from
+	 * the ListModel
+	 */
 	private void closeConnection() {
 		try {
 			connection.close();
@@ -118,6 +120,12 @@ public class ConnectionManager implements Runnable {
 	
 	
 	
+	/**
+	 * Utility to prepend time information to a message being sent to the client from
+	 * the server
+	 * @param message
+	 * @return
+	 */
 	private String generateSystemMessage(String message) {
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
