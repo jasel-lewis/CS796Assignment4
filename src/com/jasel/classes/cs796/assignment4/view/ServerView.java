@@ -255,7 +255,7 @@ public class ServerView extends JFrame implements TableModelListener {
 							"this big, lovable guy!",
 					"About UNOServer",
 					JOptionPane.INFORMATION_MESSAGE,
-					new ImageIcon(ServerView.class.getResource("/resources/wahab.jpg"))
+					new ImageIcon(ServerView.class.getResource("/resource/wahab.jpg"))
 			);
 		}
 	}
