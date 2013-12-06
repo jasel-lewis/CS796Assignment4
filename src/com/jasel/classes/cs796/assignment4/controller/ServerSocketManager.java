@@ -83,7 +83,7 @@ public class ServerSocketManager implements Runnable {
 				try {
 					threads.get(i).join(2000);
 				} catch (InterruptedException ie) {
-					;  //TODO: Do nothing - normal Exception if interrupted (maybe? - could something better be done?)
+					;  // Do nothing
 				}
 			}
 			

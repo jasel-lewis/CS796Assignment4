@@ -136,7 +136,7 @@ public class ClientView extends JFrame {
 		messageField = new JTextField();
 		messageField.setEnabled(false);
 		messageField.addActionListener(new SendAction());
-		messageField.setColumns(10);  // TODO: is this line needed??
+		messageField.setColumns(10);
 		inputControlPanel.add(messageField, BorderLayout.CENTER);
 		
 		sendButton = new JButton("Send");

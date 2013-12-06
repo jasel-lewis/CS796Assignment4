@@ -13,7 +13,7 @@ import com.jasel.classes.cs796.assignment4.view.MessageType;
  * @author Jasel
  */
 public class ConnectionManager implements Runnable {
-	private ServerController controller = null;  //TODO: this is being passed all the way down to this class solely to write to the log - make a static Log object that fires update listeners to the view's log
+	private ServerController controller = null;
 	private ConnectionTableModel model = null;
 	private Connection connection = null;
 	private volatile boolean running = false;
@@ -47,7 +47,7 @@ public class ConnectionManager implements Runnable {
 		
 		input = connection.readLine();
 		
-		if (input == null) {  // TODO: better here is input.equals("") (or a negation thereof)
+		if (input == null) {
 			// Client has closed the Connection.  This means either it is a NORMAL client which
 			// is now waiting to be called back or the Connection was aborted.
 			try {
@@ -91,7 +91,6 @@ public class ConnectionManager implements Runnable {
 	 * Prevent future echo-back with the socket, indicate that the server has
 	 * chosen to terminate the connection, and close the socket
 	 */
-	//TODO: Need to test this
 	public void terminate() {
 		running = false;
 		
@@ -112,7 +111,8 @@ public class ConnectionManager implements Runnable {
 			connection.close();
 			model.removeConnection(connection);
 		} catch (IOException e) {
-			// TODO: this exception might actually be normal because we're closing the socket when readLine() is blocking
+			// This exception might actually be normal because we're closing the socket
+			//when readLine() is blocking
 			System.err.println("Could not close the socket.  Runaway socket.");
 			e.printStackTrace();
 		}

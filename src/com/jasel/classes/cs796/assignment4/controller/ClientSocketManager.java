@@ -115,7 +115,6 @@ public class ClientSocketManager implements Runnable {
 	 * Prevent future echo-back with the socket, indicate that the server has
 	 * chosen to terminate the connection, and close the socket
 	 */
-	//TODO: Need to test this
 	public void terminate() {
 		running = false;
 		
@@ -128,7 +127,8 @@ public class ClientSocketManager implements Runnable {
 			
 			controller.configureViewForConnectedState(false);
 		} catch (IOException ioe) {
-			//TODO: this exception might actually be normal because we're closing the socket when readLine() is blocking
+			// This exception might actually be normal because we're closing the socket
+			// when readLine() is blocking
 			controller.errorHelper(ioe, "Could not close the socket");
 		}
 	}
