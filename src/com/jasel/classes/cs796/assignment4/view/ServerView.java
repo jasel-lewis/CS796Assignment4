@@ -252,7 +252,7 @@ public class ServerView extends JFrame implements TableModelListener {
 					"UNOServer / UNOClient applications created by\n" +
 							"R. J. Lewis III (rlewis) for CS796 Assignment 4.\n" +
 							"CS796 this semester (Fall 2013) was taught by\n" +
-							"<<< this big, lovable guy!",
+							"this big, lovable guy!",
 					"About UNOServer",
 					JOptionPane.INFORMATION_MESSAGE,
 					new ImageIcon(ServerView.class.getResource("/resources/wahab.jpg"))
