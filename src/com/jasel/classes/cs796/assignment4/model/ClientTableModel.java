@@ -10,13 +10,13 @@ import javax.swing.table.AbstractTableModel;
  * 
  * @author Jasel
  */
-public class ConnectionTableModel extends AbstractTableModel {
+public class ClientTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 4063686823137272854L;
 	private String[] columnNames = {"Client IP Address", "Client Port", "Client Type"};
-	private Vector<Connection> connections = new Vector<Connection>();
+	private Vector<Client> clients = new Vector<Client>();
 	
-	public Vector<Connection> getConnections() {
-		return connections;
+	public Vector<Client> getClients() {
+		return clients;
 	}
 
 	
@@ -42,7 +42,7 @@ public class ConnectionTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public int getRowCount() {
-		return connections.size();
+		return clients.size();
 	}
 
 	
@@ -52,18 +52,18 @@ public class ConnectionTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public Object getValueAt(int row, int column) {
-		Connection connection = connections.get(row);
+		Client client = clients.get(row);
 		Object value = null;
 		
 		switch (column) {
 			case 0:
-				value = connection.getIPv4();
+				value = client.getReadableIPAddress();
 				break;
 			case 1:
-				value = connection.getPort();
+				value = client.getRemotePort();
 				break;
 			case 2:
-				value = connection.getType();
+				value = client.getClientType();
 				break;
 			default:
 				value = new String("error");
@@ -81,22 +81,29 @@ public class ConnectionTableModel extends AbstractTableModel {
 	
 	
 	
-	public void addConnection(Connection connection) {
-		connections.add(connection);
+	public void addClient(Client client) {
+		clients.add(client);
 		fireTableDataChanged();
 	}
 	
 	
 	
-	public void removeConnection(Connection connection) {
-		connections.remove(connection);
+	public void removeClient(Client client) {
+		clients.remove(client);
+		fireTableDataChanged();
+	}
+	
+	
+	
+	public void updateClientType(Client client, ClientType clientType) {
+		clients.get(clients.indexOf(client)).setClientType(clientType);
 		fireTableDataChanged();
 	}
 	
 	
 	
 	public void clear() {
-		connections.clear();
+		clients.clear();
 		fireTableDataChanged();
 	}
 }

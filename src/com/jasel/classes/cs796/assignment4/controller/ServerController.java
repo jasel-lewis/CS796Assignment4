@@ -1,6 +1,6 @@
 package com.jasel.classes.cs796.assignment4.controller;
 
-import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.model.ClientTableModel;
 import com.jasel.classes.cs796.assignment4.view.MessageType;
 import com.jasel.classes.cs796.assignment4.view.ServerView;
 
@@ -9,14 +9,14 @@ import com.jasel.classes.cs796.assignment4.view.ServerView;
  * @author Jasel
  */
 public class ServerController {
-	private ConnectionTableModel model = null;
+	private ClientTableModel model = null;
 	private ServerView view = null;
 	private Thread thread = null;
 	private ServerSocketManager serverSocketManager = null;
 	boolean isListening = false;
 
 	
-	public ServerController(ConnectionTableModel model, ServerView view) {
+	public ServerController(ClientTableModel model, ServerView view) {
 		this.model = model;
 		this.view = view;
 	}

@@ -4,29 +4,27 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.jasel.classes.cs796.assignment4.model.Client;
 import com.jasel.classes.cs796.assignment4.model.ClientType;
 import com.jasel.classes.cs796.assignment4.model.Connection;
-import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.model.ClientTableModel;
 import com.jasel.classes.cs796.assignment4.view.MessageType;
 
 /**
  * @author Jasel
  */
-public class ConnectionManager implements Runnable {
+public class ServerConnectionManager implements Runnable {
 	private ServerController controller = null;
-	private ConnectionTableModel model = null;
-	private Connection connection = null;
+	private ClientTableModel model = null;
+//	private Connection connection = null;
+	private Client client = null;
 	private volatile boolean running = false;
 	
 	
-	public ConnectionManager(ServerController controller, ConnectionTableModel model, Connection connection) {
+	public ServerConnectionManager(ServerController controller, ClientTableModel model, Connection connection) {
 		this.controller = controller;
 		this.model = model;
-		this.connection = connection;
-		model.addConnection(connection);
-		controller.writeToLog(connection.toString(), MessageType.INFORMATIONAL);
-		controller.writeToLog("Connection is assumed to be Urgent at this point, won't know otherwise " +
-				"until the blocking call reading the socket returns", MessageType.SUBDUED);
+		client = new Client(connection, ClientType.URGENT);
 	}
 	
 	
@@ -37,6 +35,9 @@ public class ConnectionManager implements Runnable {
 		
 		running = true;
 		
+		model.addClient(client);
+		controller.writeToLog("Connection received - assuming Urgent client", MessageType.INFORMATIONAL);
+		
 		try {
 			// Pause a quarter of a second, giving the Connection a chance to close if
 			// it's a non-Urgent (Normal) client and open its own listening Socket
@@ -45,44 +46,42 @@ public class ConnectionManager implements Runnable {
 			;  // Do nothing
 		}
 		
-		input = connection.readLine();
+		input = client.read();
 		
 		if (input == null) {
 			// Client has closed the Connection.  This means either it is a NORMAL client which
 			// is now waiting to be called back or the Connection was aborted.
 			try {
-				model.removeConnection(connection);
+				//model.removeConnection(connection);
 				controller.writeToLog("Connection closed with no message transmission - could be a " +
 						"Normal client - attempting to call back", MessageType.WARNING);
 				
 				// Create a new Connection back to the IP and port which was just connected to us
-				connection = new Connection(connection.getInetAddress(), connection.getPort());
-				connection.setType(ClientType.NORMAL);
-				model.addConnection(connection);
-				controller.writeToLog(connection.toString(), MessageType.INFORMATIONAL);
-				input = connection.readLine();
+				client.setConnection(new Connection(client.getConnection().getInetAddress(), client.getRemotePort()));
+				model.updateClientType(client, ClientType.NORMAL);
+				controller.writeToLog("Successful callback to Normal client", MessageType.INFORMATIONAL);
+				input = client.read();
 			} catch (IOException e) {
 				// Could not create the new Connection to call-back the client - must be that the
 				// client was an aborted Connection
 				running = false;
-				controller.writeToLog("Unable to create a return Connection to the (assumed) Normal client", MessageType.ERROR);
+				controller.writeToLog("Unable to create a return Connection to the client", MessageType.ERROR);
 			}
 		}
 
 		while(running) {
 			if (input != null) {
 				// Echo back the string
-				connection.write("echoback> " + input);
+				client.write("echoback> " + input);
 			} else {
-				//controller.writeToLog("Connection has terminated", MessageType.ERROR);
 				break;
 			}
 			
-			input = connection.readLine();
+			input = client.read();
 		}
 		
 		closeConnection();
-		controller.writeToLog("Connection remotely terminated", MessageType.ERROR);
+		controller.writeToLog("Client remotely terminated", MessageType.ERROR);
 	}
 	
 	
@@ -94,8 +93,8 @@ public class ConnectionManager implements Runnable {
 	public void terminate() {
 		running = false;
 		
-		if (connection != null) {
-			connection.write(generateSystemMessage("Server has terminated the connection.  Goodbye..."));
+		if (client != null) {
+			client.write(generateSystemMessage("Server has terminated the connection.  Goodbye..."));
 			closeConnection();
 		}
 	}
@@ -108,11 +107,11 @@ public class ConnectionManager implements Runnable {
 	 */
 	private void closeConnection() {
 		try {
-			connection.close();
-			model.removeConnection(connection);
+			client.getConnection().close();
+			model.removeClient(client);
 		} catch (IOException e) {
 			// This exception might actually be normal because we're closing the socket
-			//when readLine() is blocking
+			// when readLine() is blocking
 			System.err.println("Could not close the socket.  Runaway socket.");
 			e.printStackTrace();
 		}

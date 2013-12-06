@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jasel.classes.cs796.assignment4.model.Connection;
-import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.model.ClientTableModel;
 import com.jasel.classes.cs796.assignment4.view.MessageType;
 
 /**
@@ -16,12 +16,12 @@ import com.jasel.classes.cs796.assignment4.view.MessageType;
 public class ServerSocketManager implements Runnable {
 	private ServerSocket serverSocket = null;
 	private ServerController controller = null;
-	private ConnectionTableModel model = null;
+	private ClientTableModel model = null;
 	private List<Thread> threads = new ArrayList<Thread>();
-	private List<ConnectionManager> connectionManagers = new ArrayList<ConnectionManager>();
+	private List<ServerConnectionManager> serverConnectionManagers = new ArrayList<ServerConnectionManager>();
 	private volatile boolean running = false;
 	
-	public ServerSocketManager(ServerController controller, ConnectionTableModel model, int port) {
+	public ServerSocketManager(ServerController controller, ClientTableModel model, int port) {
 		try {
 			this.controller = controller;
 			this.model = model;
@@ -38,7 +38,7 @@ public class ServerSocketManager implements Runnable {
 	@Override
 	public void run() {
 		Connection connection = null;
-		ConnectionManager clientSocketManager = null;
+		ServerConnectionManager serverConnectionManager = null;
 		Thread thread = null;
 		
 		running = true;
@@ -49,14 +49,14 @@ public class ServerSocketManager implements Runnable {
 			try {
 				connection = new Connection(serverSocket.accept());
 
-				clientSocketManager = new ConnectionManager(controller, model, connection);
-				connectionManagers.add(clientSocketManager);
+				serverConnectionManager = new ServerConnectionManager(controller, model, connection);
+				serverConnectionManagers.add(serverConnectionManager);
 				
-				thread = new Thread(clientSocketManager);
-				thread.start();
+				thread = new Thread(serverConnectionManager);
 				threads.add(thread);
+				thread.start();
 			} catch (IOException ioe) {
-				controller.writeToLog("Could not accept a new client connection", MessageType.ERROR);
+				controller.writeToLog("Could not accept a new connection", MessageType.ERROR);
 				ioe.printStackTrace();
 			}
 		}
@@ -65,10 +65,10 @@ public class ServerSocketManager implements Runnable {
 	
 	
 	/**
-	 * Terminate all ConnectionManagers and their underlying Connections
+	 * Terminate all ConnectionManagers and their underlying Clients
 	 */
 	public void terminate() {
-		int csmlSize = connectionManagers.size();
+		int csmlSize = serverConnectionManagers.size();
 		int tlSize = threads.size();
 		
 		running = false;
@@ -78,7 +78,7 @@ public class ServerSocketManager implements Runnable {
 			System.exit(2);
 		} else {
 			for (int i = 0; i < csmlSize; i++) {
-				connectionManagers.get(i).terminate();
+				serverConnectionManagers.get(i).terminate();
 				
 				try {
 					threads.get(i).join(2000);

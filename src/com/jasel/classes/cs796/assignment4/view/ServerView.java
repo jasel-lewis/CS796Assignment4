@@ -37,7 +37,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import com.jasel.classes.cs796.assignment4.controller.ServerController;
-import com.jasel.classes.cs796.assignment4.model.ConnectionTableModel;
+import com.jasel.classes.cs796.assignment4.model.ClientTableModel;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -56,7 +56,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	private JSpinner portSpinner;
 	private JTextPane log;
 	private ServerController controller;
-	private ConnectionTableModel tableModel;
+	private ClientTableModel tableModel;
 	private JTable table;
 	private JMenuItem menuItemClearLog;
 	private JMenuItem menuItemStartListening;
@@ -182,7 +182,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		
 		logScrollPane.setViewportView(log);
 		
-		tableModel = new ConnectionTableModel();
+		tableModel = new ClientTableModel();
 		table = new JTable(tableModel);
 		table.setFillsViewportHeight(true);
 		table.getModel().addTableModelListener(this);
@@ -367,7 +367,7 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	
 	
-	public ConnectionTableModel getTableModel() {
+	public ClientTableModel getTableModel() {
 		return tableModel;
 	}
 }

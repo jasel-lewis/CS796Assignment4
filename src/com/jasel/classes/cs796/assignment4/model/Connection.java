@@ -17,18 +17,10 @@ import java.net.Socket;
  */
 public class Connection {
 	private Socket socket = null;
-	private ClientType clientType = null;
 	
 	
 	public Connection(Socket socket) {
-		this(socket, ClientType.UNSPECIFIED);
-	}
-	
-	
-	
-	public Connection(Socket socket, ClientType clientType) {
 		this.socket = socket;
-		this.clientType = clientType;
 	}
 	
 	
@@ -39,19 +31,13 @@ public class Connection {
 	
 	
 	
-	public String getIPv4() {
-		return getInetAddress().getHostAddress();
-	}
-	
-	
-	
 	public InetAddress getInetAddress() {
 		return socket.getInetAddress();
 	}
 	
 	
 	
-	public int getPort() {
+	public int getRemotePort() {
 		return socket.getPort();
 	}
 	
@@ -59,18 +45,6 @@ public class Connection {
 	
 	public int getLocalPort() {
 		return socket.getLocalPort();
-	}
-	
-	
-	
-	public ClientType getType() {
-		return clientType;
-	}
-
-
-
-	public void setType(ClientType clientType) {
-		this.clientType = clientType;
 	}
 	
 	
@@ -134,13 +108,7 @@ public class Connection {
 	
 	
 	
-	public boolean hasConnection() {
-		return (socket.isConnected() && !socket.isClosed());
-	}
-	
-	
-	
 	public String toString() {
-		return (getType() + " connection from " + socket);
+		return ("Connection on " + socket);
 	}
 }

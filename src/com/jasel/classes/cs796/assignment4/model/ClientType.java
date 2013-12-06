@@ -6,7 +6,7 @@ package com.jasel.classes.cs796.assignment4.model;
 public enum ClientType {
 	NORMAL,			// Client will be contacted back by the server
 	URGENT,			// Client will use initial established connection with the server
-	UNSPECIFIED;	// Client is undesignated
+	UNSPECIFIED;	// Client is undetermined as of yet
 	
 	@Override
 	public String toString() {
