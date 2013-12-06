@@ -290,6 +290,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		
 		if (!clearLogEnabled) {
 			clearLogButton.setEnabled(true);
+			menuItemClearLog.setEnabled(true);
 			clearLogEnabled = true;
 		}
 	}

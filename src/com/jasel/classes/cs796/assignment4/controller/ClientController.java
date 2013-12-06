@@ -70,7 +70,7 @@ public class ClientController {
 				;  // Do nothing - normal Exception if interrupted
 			}
 			
-			writeToLog("Disconnected from UNOServer", MessageType.INFORMATIONAL);
+			writeToLog("Disconnected from UNOServer", MessageType.SUBDUED);
 			
 			clientSocketManager = null;
 		}

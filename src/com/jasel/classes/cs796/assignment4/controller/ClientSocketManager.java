@@ -46,7 +46,8 @@ public class ClientSocketManager implements Runnable {
 			connection = new Connection(serverInetAddress, serverPort);
 			controller.configureViewForConnectedState(true);
 			isConnected = true;
-			controller.writeToLog("Established connection with UNOServer as a " + clientType + " client", MessageType.INFORMATIONAL);
+			controller.writeToLog("Established connection with UNOServer as a " + clientType + " client",
+					MessageType.INFORMATIONAL);
 		} catch (IOException ioe) {
 			controller.configureViewForConnectingState(false);
 			controller.errorHelper(ioe, "Unable to connect to UNOServer");
@@ -60,7 +61,8 @@ public class ClientSocketManager implements Runnable {
 				connection.close();
 				controller.configureViewForConnectedState(false);
 				isConnected = false;
-				controller.writeToLog("Closed connection to let UNOServer know this is a " + clientType + " client", MessageType.WARNING);
+				controller.writeToLog("Closed connection to let UNOServer know this is a " + clientType +
+						" client", MessageType.WARNING);
 			} catch (IOException ioe) {
 				controller.errorHelper(ioe, "Could not close the connection");
 			}
