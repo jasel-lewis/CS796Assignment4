@@ -12,12 +12,14 @@ import java.text.ParseException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
@@ -125,6 +127,7 @@ public class ServerView extends JFrame implements TableModelListener {
 		JMenuItem menuItemAbout = new JMenuItem("About");
 		menuItemAbout.setMnemonic('a');
 		menuItemAbout.setMnemonic(KeyEvent.VK_A);
+		menuItemAbout.addActionListener(new AboutItemClick());
 		menuHelp.add(menuItemAbout);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -237,6 +240,24 @@ public class ServerView extends JFrame implements TableModelListener {
 	
 	public ServerController getController() {
 		return controller;
+	}
+	
+	
+	
+	private class AboutItemClick implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(
+					ServerView.this,
+					"UNOServer / UNOClient applications created by\n" +
+							"R. J. Lewis III (rlewis) for CS796 Assignment 4.\n" +
+							"CS796 this semester (Fall 2013) was taught by\n" +
+							"<<< this big, lovable guy!",
+					"About UNOServer",
+					JOptionPane.INFORMATION_MESSAGE,
+					new ImageIcon(ServerView.class.getResource("/resources/wahab.jpg"))
+			);
+		}
 	}
 	
 	
